@@ -132,7 +132,7 @@
                                             </button>
                                         </div>
 
-                                        @php
+                                        <?php
                                             $oldVal = old('achievements.' . $key);
                                             if (is_array($oldVal)) {
                                                 $achList = array_values(array_filter($oldVal, static fn ($v): bool => is_string($v) && trim($v) !== ''));
@@ -145,7 +145,7 @@
                                             if (empty($achList)) {
                                                 $achList = [''];
                                             }
-                                        @endphp
+                                        ?>
 
                                         <div class="achievements-container" id="achievements_container_{{ $key }}">
                                             @foreach ($achList as $item)

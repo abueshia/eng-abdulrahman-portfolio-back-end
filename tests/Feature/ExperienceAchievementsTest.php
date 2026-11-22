@@ -31,9 +31,11 @@ class ExperienceAchievementsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->refreshApplicationWithLocale('en');
         $this->seed();
         $this->experienceService = app(ExperienceService::class);
         $this->admin = User::query()->first() ?? User::factory()->create();
+        $this->admin->assignRole('Super admin');
     }
 
     /**
@@ -104,9 +106,24 @@ class ExperienceAchievementsTest extends TestCase
         $this->assertSame($expectedAr, $experience->getTranslation('achievements', 'ar', false));
 
         // And verify API returns array of strings
+        app()->setLocale('ar');
         $resource = (new ExperienceResource($experience))->toArray(request());
         $this->assertCount(3, $resource['achievements']);
         $this->assertSame('قدت إعادة هيكلة monolith إلى modules مستقلة لتحسين زمن الاستجابة.', $resource['achievements'][0]);
+    }
+
+    /**
+     * Test that the admin experience edit form renders successfully with existing achievements.
+     */
+    public function test_admin_experience_edit_screen_renders_successfully(): void
+    {
+        $experience = Experience::query()->firstOrFail();
+
+        $response = $this->actingAs($this->admin, 'admin')->get("/en/admin/experience/{$experience->id}/edit");
+
+        $response->assertOk()
+            ->assertSee('achievements_container_ar', false)
+            ->assertSee('achievements_container_en', false);
     }
 
     /**
