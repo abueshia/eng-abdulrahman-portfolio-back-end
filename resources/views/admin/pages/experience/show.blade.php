@@ -52,6 +52,35 @@
                                 <p class="mt-1">{{ $experience->is_current ? \App\Helpers\TranslationHelper::translate('Present') : ($experience->end_date?->format('Y-m-d') ?? '-') }}</p>
                             </div>
 
+                            @foreach (Config('language') as $key => $lang)
+                                <div class="col-md-6">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Summary in') }} {{ __('methods.' . $lang) }}:</strong>
+                                    <p class="mt-1 text-gray-700">{{ $experience->getTranslation('summary', $key, false) ?: '-' }}</p>
+                                </div>
+                            @endforeach
+
+                            @foreach (Config('language') as $key => $lang)
+                                <div class="col-md-6">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Achievements in') }} {{ __('methods.' . $lang) }}:</strong>
+                                    @php
+                                        $rawAchievements = $experience->getTranslation('achievements', $key, false);
+                                        $lines = $rawAchievements ? array_filter(array_map('trim', preg_split('/\R/u', (string) $rawAchievements))) : [];
+                                    @endphp
+                                    @if (!empty($lines))
+                                        <ul class="list-unstyled mt-2 mb-0">
+                                            @foreach ($lines as $line)
+                                                <li class="d-flex align-items-start mb-2">
+                                                    <span class="badge badge-circle badge-light-primary me-2 mt-1 fs-8 fw-bold">+</span>
+                                                    <span class="text-gray-800">{{ preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', $line) }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <p class="mt-1 text-muted">-</p>
+                                    @endif
+                                </div>
+                            @endforeach
+
                             <div class="col-md-12">
                                 <strong>{{ \App\Helpers\TranslationHelper::translate('Technologies') }}:</strong>
                                 <div class="d-flex flex-wrap gap-2 mt-2">

@@ -81,6 +81,36 @@ class Experience extends Model implements HasMedia
     ];
 
     /**
+     * Resolve a translatable attribute for the given locale with intelligent fallback.
+     * If the requested locale is empty, returns the alternate locale or any available translation.
+     */
+    public function localized(string $attribute, ?string $locale = null): ?string
+    {
+        $targetLocale = $locale ?? app()->getLocale();
+        $value = (string) $this->getTranslation($attribute, $targetLocale, false);
+        if (trim($value) !== '') {
+            return $value;
+        }
+
+        // Fallback to alternate locale (ar <-> en)
+        $alternateLocale = $targetLocale === 'ar' ? 'en' : 'ar';
+        $altValue = (string) $this->getTranslation($attribute, $alternateLocale, false);
+        if (trim($altValue) !== '') {
+            return $altValue;
+        }
+
+        // Fallback to any first non-empty translation
+        $translations = (array) $this->getTranslations($attribute);
+        foreach ($translations as $text) {
+            if (is_string($text) && trim($text) !== '') {
+                return $text;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Register media collections for company logo.
      */
     public function registerMediaCollections(): void

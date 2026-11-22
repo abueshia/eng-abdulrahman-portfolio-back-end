@@ -83,6 +83,57 @@ class ExperienceService
     }
 
     /**
+     * Normalize multi-line achievements for each language into clean newline-separated lines.
+     * Strips leading list bullet characters, removes empty lines, and enforces reasonable limits.
+     *
+     * @param  array<string, mixed>|null  $achievements
+     * @return array<string, string>
+     */
+    public function normalizeAchievements(?array $achievements): array
+    {
+        if ($achievements === null) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach (['ar', 'en'] as $locale) {
+            $raw = $achievements[$locale] ?? null;
+            if (! is_string($raw) || trim($raw) === '') {
+                $normalized[$locale] = '';
+
+                continue;
+            }
+
+            // Normalize line breaks (\r\n, \r -> \n)
+            $standardized = str_replace(["\r\n", "\r"], "\n", $raw);
+            $lines = explode("\n", $standardized);
+
+            $cleanedLines = [];
+            foreach ($lines as $line) {
+                // Strip leading list bullets, dash, asterisk, plus, bullet dots, numbers like 1. or 1)
+                $stripped = trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim($line)));
+
+                if ($stripped !== '') {
+                    // Limit max 300 characters per achievement line
+                    if (mb_strlen($stripped) > 300) {
+                        $stripped = mb_substr($stripped, 0, 300);
+                    }
+                    $cleanedLines[] = $stripped;
+                }
+
+                // Max 12 achievements per experience
+                if (count($cleanedLines) >= 12) {
+                    break;
+                }
+            }
+
+            $normalized[$locale] = implode("\n", $cleanedLines);
+        }
+
+        return $normalized;
+    }
+
+    /**
      * Create a new experience entry from validated data.
      *
      * @param  array<string, mixed>  $validated
@@ -90,6 +141,10 @@ class ExperienceService
     public function create(array $validated, ?UploadedFile $image = null): Experience
     {
         $experience = DB::transaction(function () use ($validated, $image): Experience {
+            if (array_key_exists('achievements', $validated) && is_array($validated['achievements'])) {
+                $validated['achievements'] = $this->normalizeAchievements($validated['achievements']);
+            }
+
             $technologyIds = is_array($validated['technologies'] ?? null)
                 ? array_map('intval', $validated['technologies'])
                 : [];
@@ -130,6 +185,10 @@ class ExperienceService
     public function update(Experience $experience, array $validated, ?UploadedFile $image = null): Experience
     {
         $updated = DB::transaction(function () use ($experience, $validated, $image): Experience {
+            if (array_key_exists('achievements', $validated) && is_array($validated['achievements'])) {
+                $validated['achievements'] = $this->normalizeAchievements($validated['achievements']);
+            }
+
             $hasTechKey = array_key_exists('technologies', $validated);
             $technologyIds = is_array($validated['technologies'] ?? null)
                 ? array_map('intval', $validated['technologies'])

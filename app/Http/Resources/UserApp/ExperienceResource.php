@@ -38,14 +38,21 @@ class ExperienceResource extends JsonResource
             ? (str_starts_with($logoUrl, 'http') ? $logoUrl : url($logoUrl))
             : null;
 
-        $achievements = $this->getTranslation('achievements', $locale);
+        $rawAchievements = $this->localized('achievements', $locale);
+        $achievements = $rawAchievements !== null && trim($rawAchievements) !== ''
+            ? collect(preg_split('/\R/u', $rawAchievements))
+                ->map(static fn ($line): string => trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim((string) $line))))
+                ->filter(static fn (string $line): bool => $line !== '')
+                ->values()
+                ->all()
+            : [];
 
         return [
             'id' => $this->id,
-            'company_name' => (string) $this->getTranslation('company_name', $locale),
-            'role_title' => (string) $this->getTranslation('role_title', $locale),
-            'location' => $this->getTranslation('location', $locale),
-            'summary' => $this->getTranslation('summary', $locale),
+            'company_name' => (string) ($this->localized('company_name', $locale) ?? ''),
+            'role_title' => (string) ($this->localized('role_title', $locale) ?? ''),
+            'location' => $this->localized('location', $locale),
+            'summary' => $this->localized('summary', $locale),
             'achievements' => $achievements,
             'highlights' => $achievements,
             'employment_type' => $employmentTypeEnum?->value ?? (string) $this->employment_type,

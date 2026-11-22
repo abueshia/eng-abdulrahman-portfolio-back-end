@@ -22,6 +22,38 @@ class UpdateExperienceRequest extends BasePortfolioFormRequest
     }
 
     /**
+     * Prepare the input data for validation by normalizing achievement lines.
+     */
+    protected function prepareForValidation(): void
+    {
+        $achievements = $this->input('achievements');
+        if (is_array($achievements)) {
+            $cleaned = [];
+            foreach (['ar', 'en'] as $loc) {
+                $val = $achievements[$loc] ?? null;
+                if (is_string($val)) {
+                    $standardized = str_replace(["\r\n", "\r"], "\n", $val);
+                    $lines = explode("\n", $standardized);
+                    $cleanedLines = [];
+                    foreach ($lines as $line) {
+                        $stripped = trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim($line)));
+                        if ($stripped !== '') {
+                            $cleanedLines[] = mb_strlen($stripped) > 300 ? mb_substr($stripped, 0, 300) : $stripped;
+                        }
+                        if (count($cleanedLines) >= 12) {
+                            break;
+                        }
+                    }
+                    $cleaned[$loc] = implode("\n", $cleanedLines);
+                } else {
+                    $cleaned[$loc] = $val;
+                }
+            }
+            $this->merge(['achievements' => $cleaned]);
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array

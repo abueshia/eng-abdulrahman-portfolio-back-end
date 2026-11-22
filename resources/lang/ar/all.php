@@ -93,6 +93,9 @@ return [
     'Period' => 'الفترة الزمنية',
     'Company URL' => 'رابط الشركة',
     'Company Logo' => 'شعار الشركة',
+    'Achievements in' => 'الإنجازات باللغة',
+    'One achievement per line (press Enter between items). No bullet characters.' => 'اكتب كل إنجاز في سطر منفصل (Enter بين كل إنجاز)، ومن غير علامات في أول السطر.',
+    'Experience Achievements Placeholder' => "إعادة هيكلة الأنظمة وتحسين الأداء بنسبة 40%\nبناء خطوط CI/CD مؤتمتة ونشر مستمر",
 
     // Credentials
     'Credentials' => 'المؤهلات والشهادات',

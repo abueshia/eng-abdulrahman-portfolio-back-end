@@ -127,7 +127,11 @@
                                         </label>
                                         <textarea class="form-control form-control-solid"
                                                   name="achievements[{{ $key }}]"
-                                                  rows="4">{{ old('achievements.' . $key, $experience->getTranslation('achievements', $key, false)) }}</textarea>
+                                                  rows="6"
+                                                  placeholder="{{ $key === 'ar' ? "إعادة هيكلة الأنظمة وتحسين الأداء بنسبة 40%\nبناء خطوط CI/CD مؤتمتة ونشر مستمر" : "Architected microservices improving system response by 40%\nBuilt automated CI/CD deployment pipelines" }}">{{ old('achievements.' . $key, $experience->getTranslation('achievements', $key, false)) }}</textarea>
+                                        <div class="form-text text-muted mt-2">
+                                            {{ \App\Helpers\TranslationHelper::translate('One achievement per line (press Enter between items). No bullet characters.') }}
+                                        </div>
                                     </div>
                                 @endforeach
 

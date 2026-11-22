@@ -93,6 +93,9 @@ return [
     'Period' => 'Period',
     'Company URL' => 'Company URL',
     'Company Logo' => 'Company Logo',
+    'Achievements in' => 'Achievements in',
+    'One achievement per line (press Enter between items). No bullet characters.' => 'One achievement per line (press Enter between items). No bullet characters.',
+    'Experience Achievements Placeholder' => "Architected microservices improving system response by 40%\nBuilt automated CI/CD deployment pipelines",
 
     // Credentials
     'Credentials' => 'Credentials',
