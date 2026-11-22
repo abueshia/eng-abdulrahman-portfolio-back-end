@@ -20,6 +20,22 @@
             <div id="kt_content_container" class="container-xxl">
                 <div class="card">
                     <div class="card-body pt-6">
+                        @if ($errors->any())
+                            <div class="alert alert-danger d-flex align-items-start p-4 mb-6 rounded-3">
+                                <i class="fa-solid fa-triangle-exclamation fs-2hx text-danger me-3 mt-1"></i>
+                                <div>
+                                    <div class="fw-bold mb-2">
+                                        {{ \App\Helpers\TranslationHelper::translate('Please check the submitted fields:') }}
+                                    </div>
+                                    <ul class="mb-0 ps-4">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
+
                         <form action="{{ $action }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @if ($method === 'PUT')
@@ -71,7 +87,7 @@
                                     </div>
                                 @endforeach
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mb-2">{{ \App\Helpers\TranslationHelper::translate('Employment Type') }} *</label>
                                     @php($currentEmploymentType = old('employment_type', $experience->employment_type?->value ?? \App\Enums\EmploymentTypeEnum::FullTime->value))
                                     <select class="form-select form-select-solid" name="employment_type" required>
@@ -84,10 +100,10 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="fs-6 fw-bold form-label mb-2">{{ \App\Helpers\TranslationHelper::translate('Start Date') }} *</label>
                                     <input type="date" class="form-control form-control-solid"
-                                           name="start_date"
+                                           name="start_date" id="start_date"
                                            value="{{ old('start_date', $experience->start_date?->format('Y-m-d')) }}"
                                            required/>
                                     @error('start_date')
@@ -95,14 +111,26 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-3" id="end_date_wrapper">
                                     <label class="fs-6 fw-bold form-label mb-2">{{ \App\Helpers\TranslationHelper::translate('End Date') }}</label>
                                     <input type="date" class="form-control form-control-solid"
-                                           name="end_date"
+                                           name="end_date" id="end_date_input"
                                            value="{{ old('end_date', $experience->end_date?->format('Y-m-d')) }}"/>
                                     @error('end_date')
                                         <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                     @enderror
+                                </div>
+
+                                <div class="col-md-3 d-flex flex-column justify-content-end">
+                                    <label class="fs-6 fw-bold form-label mb-2 d-none d-md-block">&nbsp;</label>
+                                    <div class="form-check form-switch form-check-custom form-check-solid mb-3">
+                                        <input type="hidden" name="is_current" value="0"/>
+                                        <input class="form-check-input" type="checkbox" name="is_current" value="1" id="is_current"
+                                               @checked((bool) old('is_current', $experience->is_current))/>
+                                        <label class="form-check-label fw-bold ms-3" for="is_current">
+                                            {{ \App\Helpers\TranslationHelper::translate('Current Role') }}
+                                        </label>
+                                    </div>
                                 </div>
 
                                 @foreach (Config('language') as $key => $lang)
@@ -197,18 +225,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-md-3 d-flex align-items-center mt-4">
-                                    <div class="form-check form-switch form-check-custom form-check-solid">
-                                        <input type="hidden" name="is_current" value="0"/>
-                                        <input class="form-check-input" type="checkbox" name="is_current" value="1" id="is_current"
-                                               @checked((bool) old('is_current', $experience->is_current))/>
-                                        <label class="form-check-label fw-bold ms-3" for="is_current">
-                                            {{ \App\Helpers\TranslationHelper::translate('Current Role') }}
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 d-flex align-items-center mt-4">
+                                <div class="col-md-6 d-flex align-items-center mt-4">
                                     <div class="form-check form-switch form-check-custom form-check-solid">
                                         <input type="hidden" name="is_active" value="0"/>
                                         <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active"
@@ -265,6 +282,35 @@
             } else {
                 $(this).closest('.achievement-row').find('input').val('');
             }
+        });
+
+        function syncDateFields() {
+            const isCurrent = $('#is_current').is(':checked');
+            const endDateInput = $('#end_date_input');
+            const endDateWrapper = $('#end_date_wrapper');
+
+            if (isCurrent) {
+                endDateInput.val('').prop('readonly', true).addClass('bg-light');
+                endDateWrapper.addClass('opacity-50');
+            } else {
+                endDateInput.prop('readonly', false).removeClass('bg-light');
+                endDateWrapper.removeClass('opacity-50');
+            }
+        }
+
+        $(document).on('change', '#is_current', function () {
+            syncDateFields();
+        });
+
+        $(document).on('change input', '#end_date_input', function () {
+            if ($(this).val()) {
+                $('#is_current').prop('checked', false);
+                syncDateFields();
+            }
+        });
+
+        $(document).ready(function () {
+            syncDateFields();
         });
     </script>
 @endpush

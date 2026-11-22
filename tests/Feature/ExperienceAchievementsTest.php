@@ -264,4 +264,41 @@ class ExperienceAchievementsTest extends TestCase
         $firstAchievements = $response->json('data.0.achievements');
         $this->assertIsArray($firstAchievements);
     }
+
+    /**
+     * Test admin can update experience with end_date, ensuring is_current is automatically turned off.
+     */
+    public function test_admin_can_update_experience_with_end_date(): void
+    {
+        $experience = Experience::factory()->create([
+            'start_date' => '2021-01-01',
+            'end_date' => null,
+            'is_current' => true,
+        ]);
+
+        $payload = [
+            'company_name' => ['ar' => 'شركة أ', 'en' => 'Company A'],
+            'role_title' => ['ar' => 'مطور', 'en' => 'Developer'],
+            'employment_type' => EmploymentTypeEnum::Freelance->value,
+            'start_date' => '2021-01-01',
+            'end_date' => '2022-06-30',
+            'is_current' => 1, // Even if submitted as 1, specifying end_date must override it to false
+            'summary' => ['ar' => 'ملخص عربي', 'en' => 'English summary'],
+            'achievements' => [
+                'ar' => ['إنجاز 1'],
+                'en' => ['Achievement 1'],
+            ],
+            'is_active' => 1,
+        ];
+
+        $response = $this->actingAs($this->admin, 'admin')
+            ->put(route('admin.experience.update', $experience), $payload);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('admin.experience.index'));
+
+        $experience->refresh();
+        $this->assertSame('2022-06-30', $experience->end_date?->format('Y-m-d'));
+        $this->assertFalse($experience->is_current);
+    }
 }

@@ -26,6 +26,12 @@ class UpdateExperienceRequest extends BasePortfolioFormRequest
      */
     protected function prepareForValidation(): void
     {
+        if ($this->filled('end_date')) {
+            $this->merge(['is_current' => 0]);
+        } elseif ($this->boolean('is_current')) {
+            $this->merge(['end_date' => null]);
+        }
+
         $achievements = $this->input('achievements');
         if (is_array($achievements)) {
             $cleaned = [];
