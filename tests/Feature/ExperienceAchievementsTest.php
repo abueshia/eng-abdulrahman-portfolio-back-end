@@ -70,6 +70,46 @@ class ExperienceAchievementsTest extends TestCase
     }
 
     /**
+     * Test that achievements submitted as an array of items (repeater inputs) are saved as clean lines.
+     */
+    public function test_achievements_can_be_submitted_as_repeater_array_and_saved_as_lines(): void
+    {
+        $payload = [
+            'company_name' => ['ar' => 'شركة التقنية المتقدمة', 'en' => 'Advanced Tech'],
+            'role_title' => ['ar' => 'قائد فريق برمجيات', 'en' => 'Tech Lead'],
+            'employment_type' => EmploymentTypeEnum::FullTime->value,
+            'start_date' => '2023-06-01',
+            'summary' => ['ar' => 'قيادة الفرق الفنية وتطوير البنية التحتية', 'en' => 'Leading engineering teams and infrastructure'],
+            'achievements' => [
+                'ar' => [
+                    '+ قدت إعادة هيكلة monolith إلى modules مستقلة لتحسين زمن الاستجابة.',
+                    'أسست pipeline للاختبارات والنشر المستمر عبر GitHub Actions.',
+                    '• أشرفت على مراجعة الكود وتوجيه مطورين جدد.',
+                    '', // empty row that should be filtered out
+                ],
+                'en' => [
+                    'Led system modularization improving latency.',
+                    'Built automated CI/CD pipeline.',
+                ],
+            ],
+            'is_active' => true,
+        ];
+
+        $response = $this->actingAs($this->admin, 'admin')->post(route('admin.experience.store'), $payload);
+        $response->assertRedirect(route('admin.experience.index'));
+
+        $experience = Experience::query()->where('company_name->en', 'Advanced Tech')->firstOrFail();
+
+        $expectedAr = "قدت إعادة هيكلة monolith إلى modules مستقلة لتحسين زمن الاستجابة.\nأسست pipeline للاختبارات والنشر المستمر عبر GitHub Actions.\nأشرفت على مراجعة الكود وتوجيه مطورين جدد.";
+        $this->assertSame($expectedAr, $experience->getTranslation('achievements', 'ar', false));
+
+        // And verify API returns array of strings
+        $resource = (new ExperienceResource($experience))->toArray(request());
+        $this->assertCount(3, $resource['achievements']);
+        $this->assertSame('قدت إعادة هيكلة monolith إلى modules مستقلة لتحسين زمن الاستجابة.', $resource['achievements'][0]);
+    }
+
+    /**
      * Test that ExperienceResource transforms multi-line achievements into an array of strings.
      */
     public function test_experience_resource_returns_array_of_strings_for_multiline_achievements(): void

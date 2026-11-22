@@ -98,18 +98,23 @@ class ExperienceService
         $normalized = [];
         foreach (['ar', 'en'] as $locale) {
             $raw = $achievements[$locale] ?? null;
-            if (! is_string($raw) || trim($raw) === '') {
+            if (is_array($raw)) {
+                $lines = $raw;
+            } elseif (is_string($raw) && trim($raw) !== '') {
+                // Normalize line breaks (\r\n, \r -> \n)
+                $standardized = str_replace(["\r\n", "\r"], "\n", $raw);
+                $lines = explode("\n", $standardized);
+            } else {
                 $normalized[$locale] = '';
 
                 continue;
             }
 
-            // Normalize line breaks (\r\n, \r -> \n)
-            $standardized = str_replace(["\r\n", "\r"], "\n", $raw);
-            $lines = explode("\n", $standardized);
-
             $cleanedLines = [];
             foreach ($lines as $line) {
+                if (! is_string($line)) {
+                    continue;
+                }
                 // Strip leading list bullets, dash, asterisk, plus, bullet dots, numbers like 1. or 1)
                 $stripped = trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim($line)));
 

@@ -94,6 +94,9 @@ return [
     'Company URL' => 'رابط الشركة',
     'Company Logo' => 'شعار الشركة',
     'Achievements in' => 'الإنجازات باللغة',
+    'Add Achievement' => 'إضافة إنجاز',
+    'Write an achievement here...' => 'اكتب إنجازاً مميزاً هنا...',
+    'Add key achievements for this role. Each item will be displayed with a bullet.' => 'أضف أهم الإنجازات في هذه الوظيفة، وسيتم عرض كل إنجاز مع علامة + على الموقع.',
     'One achievement per line (press Enter between items). No bullet characters.' => 'اكتب كل إنجاز في سطر منفصل (Enter بين كل إنجاز)، ومن غير علامات في أول السطر.',
     'Experience Achievements Placeholder' => "إعادة هيكلة الأنظمة وتحسين الأداء بنسبة 40%\nبناء خطوط CI/CD مؤتمتة ونشر مستمر",
 

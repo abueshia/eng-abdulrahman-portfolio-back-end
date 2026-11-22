@@ -31,23 +31,32 @@ class UpdateExperienceRequest extends BasePortfolioFormRequest
             $cleaned = [];
             foreach (['ar', 'en'] as $loc) {
                 $val = $achievements[$loc] ?? null;
-                if (is_string($val)) {
+                if (is_array($val)) {
+                    $lines = $val;
+                } elseif (is_string($val) && trim($val) !== '') {
                     $standardized = str_replace(["\r\n", "\r"], "\n", $val);
                     $lines = explode("\n", $standardized);
-                    $cleanedLines = [];
-                    foreach ($lines as $line) {
-                        $stripped = trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim($line)));
-                        if ($stripped !== '') {
-                            $cleanedLines[] = mb_strlen($stripped) > 300 ? mb_substr($stripped, 0, 300) : $stripped;
-                        }
-                        if (count($cleanedLines) >= 12) {
-                            break;
-                        }
-                    }
-                    $cleaned[$loc] = implode("\n", $cleanedLines);
                 } else {
-                    $cleaned[$loc] = $val;
+                    $cleaned[$loc] = null;
+
+                    continue;
                 }
+
+                $cleanedLines = [];
+                foreach ($lines as $line) {
+                    if (! is_string($line)) {
+                        continue;
+                    }
+                    $stripped = trim((string) preg_replace('/^([-\*+•·‣]|\d+[\.\)])\s*/u', '', trim($line)));
+                    if ($stripped !== '') {
+                        $cleanedLines[] = mb_strlen($stripped) > 300 ? mb_substr($stripped, 0, 300) : $stripped;
+                    }
+                    if (count($cleanedLines) >= 12) {
+                        break;
+                    }
+                }
+
+                $cleaned[$loc] = ! empty($cleanedLines) ? implode("\n", $cleanedLines) : null;
             }
             $this->merge(['achievements' => $cleaned]);
         }

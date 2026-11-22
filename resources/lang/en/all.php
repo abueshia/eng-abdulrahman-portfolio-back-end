@@ -94,6 +94,9 @@ return [
     'Company URL' => 'Company URL',
     'Company Logo' => 'Company Logo',
     'Achievements in' => 'Achievements in',
+    'Add Achievement' => 'Add Achievement',
+    'Write an achievement here...' => 'Write an achievement here...',
+    'Add key achievements for this role. Each item will be displayed with a bullet.' => 'Add key achievements for this role. Each item will be displayed with a bullet on the website.',
     'One achievement per line (press Enter between items). No bullet characters.' => 'One achievement per line (press Enter between items). No bullet characters.',
     'Experience Achievements Placeholder' => "Architected microservices improving system response by 40%\nBuilt automated CI/CD deployment pipelines",
 

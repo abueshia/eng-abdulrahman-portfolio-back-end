@@ -121,16 +121,49 @@
                                 @endforeach
 
                                 @foreach (Config('language') as $key => $lang)
-                                    <div class="col-md-6">
-                                        <label class="fs-6 fw-bold form-label mb-2">
-                                            {{ \App\Helpers\TranslationHelper::translate('Achievements in') }} {{ __('methods.' . $lang) }}
-                                        </label>
-                                        <textarea class="form-control form-control-solid"
-                                                  name="achievements[{{ $key }}]"
-                                                  rows="6"
-                                                  placeholder="{{ $key === 'ar' ? "إعادة هيكلة الأنظمة وتحسين الأداء بنسبة 40%\nبناء خطوط CI/CD مؤتمتة ونشر مستمر" : "Architected microservices improving system response by 40%\nBuilt automated CI/CD deployment pipelines" }}">{{ old('achievements.' . $key, $experience->getTranslation('achievements', $key, false)) }}</textarea>
+                                    <div class="col-md-6 mb-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <label class="fs-6 fw-bold form-label mb-0">
+                                                {{ \App\Helpers\TranslationHelper::translate('Achievements in') }} {{ __('methods.' . $lang) }}
+                                            </label>
+                                            <button type="button" class="btn btn-sm btn-light-primary add-achievement-btn" data-lang="{{ $key }}">
+                                                <i class="ki-duotone ki-plus fs-3"></i>
+                                                {{ \App\Helpers\TranslationHelper::translate('Add Achievement') }}
+                                            </button>
+                                        </div>
+
+                                        @php
+                                            $oldVal = old('achievements.' . $key);
+                                            if (is_array($oldVal)) {
+                                                $achList = array_values(array_filter($oldVal, static fn ($v): bool => is_string($v) && trim($v) !== ''));
+                                            } elseif (is_string($oldVal)) {
+                                                $achList = array_values(array_filter(array_map('trim', preg_split('/\R/u', $oldVal))));
+                                            } else {
+                                                $raw = (string) $experience->getTranslation('achievements', $key, false);
+                                                $achList = $raw !== '' ? array_values(array_filter(array_map('trim', preg_split('/\R/u', $raw)))) : [];
+                                            }
+                                            if (empty($achList)) {
+                                                $achList = [''];
+                                            }
+                                        @endphp
+
+                                        <div class="achievements-container" id="achievements_container_{{ $key }}">
+                                            @foreach ($achList as $item)
+                                                <div class="achievement-row d-flex align-items-center gap-2 mb-2">
+                                                    <span class="badge badge-light-primary fw-bold px-3 py-2">+</span>
+                                                    <input type="text"
+                                                           name="achievements[{{ $key }}][]"
+                                                           class="form-control form-control-solid flex-grow-1"
+                                                           placeholder="{{ $key === 'ar' ? 'اكتب إنجازاً مميزاً هنا...' : 'Write an achievement here...' }}"
+                                                           value="{{ $item }}"/>
+                                                    <button type="button" class="btn btn-icon btn-light-danger remove-achievement-btn" title="{{ \App\Helpers\TranslationHelper::translate('Delete') }}">
+                                                        <i class="fas fa-trash-alt fs-5"></i>
+                                                    </button>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                         <div class="form-text text-muted mt-2">
-                                            {{ \App\Helpers\TranslationHelper::translate('One achievement per line (press Enter between items). No bullet characters.') }}
+                                            {{ \App\Helpers\TranslationHelper::translate('Add key achievements for this role. Each item will be displayed with a bullet.') }}
                                         </div>
                                     </div>
                                 @endforeach
@@ -199,4 +232,40 @@
         </div>
     </div>
 @endsection
+
+@push('admin_js')
+    <script>
+        $(document).on('click', '.add-achievement-btn', function () {
+            const lang = $(this).data('lang');
+            const container = $('#achievements_container_' + lang);
+            const placeholder = lang === 'ar' ? 'اكتب إنجازاً مميزاً هنا...' : 'Write an achievement here...';
+            const deleteTitle = '{{ \App\Helpers\TranslationHelper::translate("Delete") }}';
+
+            const newRow = $(`
+                <div class="achievement-row d-flex align-items-center gap-2 mb-2">
+                    <span class="badge badge-light-primary fw-bold px-3 py-2">+</span>
+                    <input type="text"
+                           name="achievements[${lang}][]"
+                           class="form-control form-control-solid flex-grow-1"
+                           placeholder="${placeholder}"
+                           value=""/>
+                    <button type="button" class="btn btn-icon btn-light-danger remove-achievement-btn" title="${deleteTitle}">
+                        <i class="fas fa-trash-alt fs-5"></i>
+                    </button>
+                </div>
+            `);
+            container.append(newRow);
+            newRow.find('input').focus();
+        });
+
+        $(document).on('click', '.remove-achievement-btn', function () {
+            const container = $(this).closest('.achievements-container');
+            if (container.find('.achievement-row').length > 1) {
+                $(this).closest('.achievement-row').remove();
+            } else {
+                $(this).closest('.achievement-row').find('input').val('');
+            }
+        });
+    </script>
+@endpush
 
