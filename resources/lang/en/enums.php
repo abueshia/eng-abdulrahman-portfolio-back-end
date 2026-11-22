@@ -112,6 +112,7 @@ return [
         'github_url' => 'GitHub Profile URL',
         'linkedin_url' => 'LinkedIn Profile URL',
         'x_url' => 'X (Twitter) Profile URL',
+        'facebook_url' => 'Facebook Profile URL',
         'youtube_url' => 'YouTube Channel URL',
         'seo_meta_title' => 'Default SEO Meta Title',
         'seo_meta_description' => 'Default SEO Meta Description',

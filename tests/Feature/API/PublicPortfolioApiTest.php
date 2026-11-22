@@ -84,7 +84,8 @@ class PublicPortfolioApiTest extends TestCase
             ->assertJsonPath('code', 200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.locale', 'en')
-            ->assertJsonPath('data.general.owner_name', 'Eng. Abdelrahman Abu Eisha');
+            ->assertJsonPath('data.general.owner_name', 'Eng. Abdelrahman Abu Eisha')
+            ->assertJsonPath('data.contact.facebook_url', 'https://facebook.com/abdelrahman.abuaishah');
 
         $etag = $enResponse->headers->get('ETag');
         $this->assertNotEmpty($etag);

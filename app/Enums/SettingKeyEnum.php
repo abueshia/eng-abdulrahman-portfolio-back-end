@@ -50,6 +50,7 @@ enum SettingKeyEnum: string
     case GithubUrl = 'github_url';
     case LinkedinUrl = 'linkedin_url';
     case XUrl = 'x_url';
+    case FacebookUrl = 'facebook_url';
     case YoutubeUrl = 'youtube_url';
 
     // 5. SEO Tab
@@ -119,6 +120,7 @@ enum SettingKeyEnum: string
             self::GithubUrl,
             self::LinkedinUrl,
             self::XUrl,
+            self::FacebookUrl,
             self::YoutubeUrl => SettingGroupEnum::Contact,
 
             self::SeoMetaTitle,
@@ -169,6 +171,7 @@ enum SettingKeyEnum: string
             self::GithubUrl,
             self::LinkedinUrl,
             self::XUrl,
+            self::FacebookUrl,
             self::YoutubeUrl,
             self::CtaButtonUrl => SettingTypeEnum::Url,
 
@@ -342,6 +345,7 @@ enum SettingKeyEnum: string
             self::GithubUrl => ['value' => 'https://github.com/abdelrahman-abuaishah'],
             self::LinkedinUrl => ['value' => 'https://linkedin.com/in/abdelrahman-abuaishah'],
             self::XUrl => ['value' => 'https://x.com/abdelrahman_dev'],
+            self::FacebookUrl => ['value' => 'https://facebook.com/abdelrahman.abuaishah'],
             self::YoutubeUrl => ['value' => ''],
 
             // SEO

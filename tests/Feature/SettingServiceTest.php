@@ -51,6 +51,12 @@ class SettingServiceTest extends TestCase
         $this->assertSame(SettingTypeEnum::Boolean, $visibilityKey->type());
         $this->assertFalse($visibilityKey->isTranslatable());
         $this->assertTrue($visibilityKey->defaultForLocale());
+
+        $facebookKey = SettingKeyEnum::FacebookUrl;
+        $this->assertSame(SettingGroupEnum::Contact, $facebookKey->group());
+        $this->assertSame(SettingTypeEnum::Url, $facebookKey->type());
+        $this->assertFalse($facebookKey->isTranslatable());
+        $this->assertSame('https://facebook.com/abdelrahman.abuaishah', $facebookKey->defaultForLocale());
     }
 
     /**
@@ -112,6 +118,7 @@ class SettingServiceTest extends TestCase
                 ],
                 SettingKeyEnum::AvailableForHire->value => '0',
                 SettingKeyEnum::ContactEmail->value => 'hire@abdelrahman-dev.com',
+                SettingKeyEnum::FacebookUrl->value => 'https://facebook.com/abdelrahman.custom',
             ],
             files: [
                 SettingKeyEnum::Logo->value => $logoFile,
@@ -126,6 +133,7 @@ class SettingServiceTest extends TestCase
         $this->assertSame('New Hero Headline in English', setting(SettingKeyEnum::HeroHeadline, 'en'));
         $this->assertFalse((bool) setting(SettingKeyEnum::AvailableForHire));
         $this->assertSame('hire@abdelrahman-dev.com', setting(SettingKeyEnum::ContactEmail));
+        $this->assertSame('https://facebook.com/abdelrahman.custom', setting(SettingKeyEnum::FacebookUrl));
 
         $logoSetting = Setting::query()->where('key', SettingKeyEnum::Logo->value)->first();
         $this->assertNotNull($logoSetting);

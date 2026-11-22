@@ -320,14 +320,42 @@
                                                             \App\Enums\SettingTypeEnum::Url => 'url',
                                                             default => 'text',
                                                         };
+                                                        $fieldIcons = [
+                                                            'facebook_url' => 'fa-brands fa-facebook text-primary',
+                                                            'github_url' => 'fa-brands fa-github text-dark',
+                                                            'linkedin_url' => 'fa-brands fa-linkedin text-info',
+                                                            'x_url' => 'fa-brands fa-x-twitter text-dark',
+                                                            'youtube_url' => 'fa-brands fa-youtube text-danger',
+                                                            'contact_email' => 'fa-solid fa-envelope text-primary',
+                                                            'contact_phone' => 'fa-solid fa-phone text-success',
+                                                            'contact_whatsapp' => 'fa-brands fa-whatsapp text-success',
+                                                            'resume_url' => 'fa-solid fa-file-pdf text-danger',
+                                                        ];
+                                                        $fieldIcon = $fieldIcons[$settingKey] ?? null;
                                                     @endphp
-                                                    <input
-                                                        type="{{ $inputType }}"
-                                                        name="settings[{{ $settingKey }}]"
-                                                        dir="ltr"
-                                                        value="{{ old("settings.{$settingKey}", $scalarValue) }}"
-                                                        class="form-control form-control-solid"
-                                                    >
+                                                    @if ($fieldIcon)
+                                                        <div class="input-group input-group-solid">
+                                                            <span class="input-group-text bg-light border-0">
+                                                                <i class="{{ $fieldIcon }} fs-4"></i>
+                                                            </span>
+                                                            <input
+                                                                type="{{ $inputType }}"
+                                                                name="settings[{{ $settingKey }}]"
+                                                                dir="ltr"
+                                                                value="{{ old("settings.{$settingKey}", $scalarValue) }}"
+                                                                class="form-control form-control-solid"
+                                                                placeholder="{{ $inputType === 'url' ? 'https://...' : '' }}"
+                                                            >
+                                                        </div>
+                                                    @else
+                                                        <input
+                                                            type="{{ $inputType }}"
+                                                            name="settings[{{ $settingKey }}]"
+                                                            dir="ltr"
+                                                            value="{{ old("settings.{$settingKey}", $scalarValue) }}"
+                                                            class="form-control form-control-solid"
+                                                        >
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>

@@ -112,6 +112,7 @@ return [
         'github_url' => 'رابط حساب GitHub',
         'linkedin_url' => 'رابط حساب LinkedIn',
         'x_url' => 'رابط حساب X (Twitter)',
+        'facebook_url' => 'رابط حساب Facebook',
         'youtube_url' => 'رابط قناة YouTube',
         'seo_meta_title' => 'عنوان الـ SEO الافتراضي (Meta Title)',
         'seo_meta_description' => 'وصف الـ SEO الافتراضي (Meta Description)',
