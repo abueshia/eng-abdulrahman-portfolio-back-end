@@ -5,7 +5,7 @@
  *
  * Verifies Phase 2 domain architecture: PHP 8.3 Backed Enums (labels, colors, options),
  * Eloquent Models, Relationships, Local Scopes, Spatie Translations, Model Factories,
- * and full Database Seeding for Eng. Abdelrahman Abu Aishah's Portfolio.
+ * and full Database Seeding for Eng. Abdelrahman Abu Eisha's Portfolio.
  */
 
 declare(strict_types=1);
@@ -174,7 +174,7 @@ class PortfolioDomainSchemaTest extends TestCase
             'key' => 'owner_name',
             'value' => [
                 'ar' => 'مهندس / عبدالرحمن أبو عيشة',
-                'en' => 'Eng. Abdelrahman Abu Aishah',
+                'en' => 'Eng. Abdelrahman Abu Eisha',
             ],
             'type' => SettingTypeEnum::Text,
             'is_translatable' => true,
@@ -183,12 +183,12 @@ class PortfolioDomainSchemaTest extends TestCase
         Cache::forget('settings');
 
         $this->assertSame('مهندس / عبدالرحمن أبو عيشة', setting('owner_name', 'ar'));
-        $this->assertSame('Eng. Abdelrahman Abu Aishah', setting('owner_name', 'en'));
+        $this->assertSame('Eng. Abdelrahman Abu Eisha', setting('owner_name', 'en'));
         $this->assertCount(1, Setting::query()->byGroup(SettingGroupEnum::About)->get());
     }
 
     /**
-     * Ensure the full DatabaseSeeder runs cleanly and populates Eng. Abdelrahman Abu Aishah's portfolio data.
+     * Ensure the full DatabaseSeeder runs cleanly and populates Eng. Abdelrahman Abu Eisha's portfolio data.
      */
     public function test_database_seeder_populates_complete_portfolio_data(): void
     {

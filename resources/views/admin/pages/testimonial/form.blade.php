@@ -35,8 +35,7 @@
                                         <input type="text"
                                                class="form-control form-control-solid"
                                                name="name[{{ $key }}]"
-                                               value="{{ old('name.' . $key, $testimonial->getTranslation('name', $key, false)) }}"
-                                               required/>
+                                               value="{{ old('name.' . $key, $testimonial->getTranslation('name', $key, false)) }}"/>
                                         @error('name.' . $key)
                                             <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                         @enderror
@@ -80,8 +79,7 @@
                                         </label>
                                         <textarea class="form-control form-control-solid"
                                                   name="description[{{ $key }}]"
-                                                  rows="4"
-                                                  required>{{ old('description.' . $key, $testimonial->getTranslation('description', $key, false)) }}</textarea>
+                                                  rows="4">{{ old('description.' . $key, $testimonial->getTranslation('description', $key, false)) }}</textarea>
                                         @error('description.' . $key)
                                             <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                         @enderror

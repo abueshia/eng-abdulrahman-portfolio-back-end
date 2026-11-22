@@ -33,10 +33,10 @@ class TestimonialResource extends JsonResource
             ? (str_starts_with($avatarUrl, 'http') ? $avatarUrl : url($avatarUrl))
             : null;
 
-        $name = (string) $this->getTranslation('name', $locale);
-        $role = $this->getTranslation('name_job', $locale);
-        $company = $this->getTranslation('company_name', $locale);
-        $description = (string) $this->getTranslation('description', $locale);
+        $name = (string) ($this->localized('name', $locale) ?? '');
+        $role = $this->localized('name_job', $locale);
+        $company = $this->localized('company_name', $locale);
+        $description = (string) ($this->localized('description', $locale) ?? '');
 
         return [
             'id' => $this->id,
@@ -50,6 +50,7 @@ class TestimonialResource extends JsonResource
             'rating' => (int) $this->rating,
             'is_featured' => (bool) $this->is_featured,
             'sort_order' => (int) $this->sort_order,
+            'source' => (string) ($this->source ?? 'dashboard'),
             'avatar' => $absoluteAvatar,
             'project' => $this->whenLoaded('project', function () use ($locale): ?array {
                 if ($this->project === null) {

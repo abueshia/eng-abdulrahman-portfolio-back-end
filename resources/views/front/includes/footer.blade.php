@@ -239,7 +239,7 @@
     <div class="dt-footer__main">
         <div class="dt-footer__col dt-footer__col--brand">
             <a href="{{ route('site.home') }}" class="dt-logo dt-logo--light">
-                <img src="{{asset('front/assets/img/logo/Silver-blue.png')}}" alt="Eng. Abdelrahman Abu Aishah Portfolio" class="dt-logo__img">
+                <img src="{{asset('front/assets/img/logo/Silver-blue.png')}}" alt="Eng. Abdelrahman Abu Eisha Portfolio" class="dt-logo__img">
             </a>
             <p class="dt-footer__about">
                 مهندس برمجيات متكامل (Full-Stack Software Engineer) بخبرة تمتد لأكثر من 4 سنوات في تطوير الباك إند باستخدام PHP Laravel وبناء واجهات المستخدم التفاعلية باستخدام JavaScript و React.js.
@@ -290,7 +290,7 @@
     </div>
 
     <div class="dt-footer__bottom">
-        <span>جميع الحقوق محفوظة للمهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Aishah) © 2026</span>
-        <span>تصميم وتطوير <a href="{{ route('site.home') }}">Eng. Abdelrahman Abu Aishah</a></span>
+        <span>جميع الحقوق محفوظة للمهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Eisha) © 2026</span>
+        <span>تصميم وتطوير <a href="{{ route('site.home') }}">Eng. Abdelrahman Abu Eisha</a></span>
     </div>
 </footer>

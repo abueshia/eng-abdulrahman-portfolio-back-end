@@ -38,9 +38,12 @@ use App\Models\Stat;
 use App\Models\Technology;
 use App\Models\Testimonial;
 use App\Services\SettingService;
+use App\Services\TestimonialService;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PublicPortfolioApiTest extends TestCase
@@ -81,7 +84,7 @@ class PublicPortfolioApiTest extends TestCase
             ->assertJsonPath('code', 200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.locale', 'en')
-            ->assertJsonPath('data.general.owner_name', 'Eng. Abdelrahman Abu Aishah');
+            ->assertJsonPath('data.general.owner_name', 'Eng. Abdelrahman Abu Eisha');
 
         $etag = $enResponse->headers->get('ETag');
         $this->assertNotEmpty($etag);
@@ -405,6 +408,176 @@ class PublicPortfolioApiTest extends TestCase
 
         $localResponse->assertOk()
             ->assertHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    }
+
+    /**
+     * Verify v1 (/api/v1/testimonials) listing endpoint.
+     */
+    public function test_testimonials_endpoints_direct_and_v1(): void
+    {
+        $this->seedSamplePortfolioContent();
+
+        $this->getJson('/api/v1/testimonials?lang=en')
+            ->assertOk()
+            ->assertJsonPath('code', 200)
+            ->assertJsonPath('data.0.client_name', 'John CTO');
+
+        $this->getJson('/api/v1/testimonials?lang=ar')
+            ->assertOk()
+            ->assertJsonPath('code', 200)
+            ->assertJsonPath('data.0.client_name', 'جون المدير التقني');
+    }
+
+    /**
+     * Verify public testimonial submission validation and honeypot rejection.
+     */
+    public function test_public_testimonial_submission_validation_and_honeypot(): void
+    {
+        RateLimiter::clear('3');
+
+        // 1. Validation failure: missing name and description
+        $invalid = $this->postJson('/api/v1/testimonials', [
+            'rating' => 5,
+        ]);
+
+        $invalid->assertStatus(422)
+            ->assertJsonPath('code', 422)
+            ->assertJsonPath('success', false)
+            ->assertJsonStructure(['code', 'success', 'message', 'errors' => ['name', 'description']]);
+
+        // 2. Honeypot rejection via 'hp'
+        $honeypotHp = $this->postJson('/api/v1/testimonials', [
+            'name' => 'Bot Tester',
+            'description' => 'Spam testimonial content here',
+            'hp' => 'spam-bot-value',
+        ]);
+
+        $honeypotHp->assertStatus(422)
+            ->assertJsonPath('success', false);
+
+        // 3. Honeypot rejection via 'website'
+        $honeypotWebsite = $this->postJson('/api/v1/testimonials', [
+            'name' => 'Bot Tester 2',
+            'description' => 'Spam testimonial content here',
+            'website' => 'https://bot.example.com',
+        ]);
+
+        $honeypotWebsite->assertStatus(422)
+            ->assertJsonPath('success', false);
+    }
+
+    /**
+     * Verify public testimonial submission enforces is_active = false, source = website,
+     * and single-language submissions fallback gracefully to the original language.
+     */
+    public function test_public_testimonial_submission_success_and_retrieval(): void
+    {
+        RateLimiter::clear('3');
+        ['publishedProject' => $publishedProject] = $this->seedSamplePortfolioContent();
+
+        // 1. Submit via /api/v1/testimonials with English locale
+        $responseV1 = $this->postJson('/api/v1/testimonials?locale=en', [
+            'client_name' => 'Sarah Connor',
+            'client_role' => 'CTO',
+            'company' => 'Cyberdyne Systems',
+            'testimonial' => 'Outstanding engineering skills and delivered ahead of schedule.',
+            'rating' => 5,
+            'project_id' => $publishedProject->id,
+            'consent' => true,
+        ]);
+
+        $responseV1->assertCreated()
+            ->assertJsonPath('code', 201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'Sarah Connor')
+            ->assertJsonPath('data.client_role', 'CTO')
+            ->assertJsonPath('data.company_name', 'Cyberdyne Systems')
+            ->assertJsonPath('data.rating', 5)
+            ->assertJsonPath('data.source', 'website')
+            ->assertJsonPath('data.project.slug', $publishedProject->slug);
+
+        // Verify strictly stored as inactive pending review, with source = website and consent_at
+        $this->assertDatabaseHas('testimonials', [
+            'project_id' => $publishedProject->id,
+            'rating' => 5,
+            'is_active' => false,
+            'source' => 'website',
+        ]);
+
+        $saved = Testimonial::query()->where('source', 'website')->firstOrFail();
+        $this->assertNotNull($saved->consent_at);
+
+        // Since it is inactive, it must NOT appear in public active testimonials listing
+        $listBeforeApproval = $this->getJson('/api/v1/testimonials?lang=en');
+        $listBeforeApproval->assertOk();
+        $namesBefore = collect($listBeforeApproval->json('data'))->pluck('client_name')->all();
+        $this->assertNotContains('Sarah Connor', $namesBefore);
+
+        // 2. Admin activates the testimonial from dashboard
+        $saved->update(['is_active' => true]);
+        app(TestimonialService::class)->flushCache();
+
+        // 3. Verify single-language fallback:
+        // Even when requesting Arabic (?lang=ar), since it was submitted in English only,
+        // it must gracefully return the original English text ('Sarah Connor')!
+        $listArabic = $this->getJson('/api/v1/testimonials?lang=ar');
+        $listArabic->assertOk();
+        $namesArabic = collect($listArabic->json('data'))->pluck('client_name')->all();
+        $this->assertContains('Sarah Connor', $namesArabic);
+
+        // 4. Verify /api/v1/testimonials POST submission with Arabic input
+        RateLimiter::clear('3');
+        $responseDirect = $this->postJson('/api/v1/testimonials?locale=ar', [
+            'name' => 'المهندس كريم',
+            'name_job' => 'مدير تقني',
+            'company_name' => 'شركة الحلول الذكية',
+            'description' => 'تجربة عمل رائعة واحترافية عالية جداً ومتقنة.',
+            'rating' => 5,
+        ]);
+
+        $responseDirect->assertCreated()
+            ->assertJsonPath('code', 201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'المهندس كريم');
+
+        $arTestimonial = Testimonial::query()->where('name->ar', 'المهندس كريم')->firstOrFail();
+        $this->assertFalse((bool) $arTestimonial->is_active);
+        $this->assertSame('website', $arTestimonial->source);
+
+        // Activate Arabic review and verify fallback in English (?lang=en)
+        $arTestimonial->update(['is_active' => true]);
+        app(TestimonialService::class)->flushCache();
+
+        $listEnglish = $this->getJson('/api/v1/testimonials?lang=en');
+        $listEnglish->assertOk();
+        $namesEnglish = collect($listEnglish->json('data'))->pluck('client_name')->all();
+        $this->assertContains('المهندس كريم', $namesEnglish);
+    }
+
+    /**
+     * Verify public testimonial submission with avatar upload.
+     */
+    public function test_public_testimonial_submission_with_avatar_upload(): void
+    {
+        Storage::fake('public');
+        RateLimiter::clear('3');
+
+        $file = UploadedFile::fake()->image('client-avatar.jpg', 200, 200);
+
+        $response = $this->post('/api/v1/testimonials', [
+            'name' => 'Elena Rostova',
+            'name_job' => 'Product Director',
+            'company_name' => 'Nova Labs',
+            'description' => 'Abdelrahman delivered flawless software architecture.',
+            'rating' => 5,
+            'avatar' => $file,
+        ], ['Accept' => 'application/json']);
+
+        $response->assertCreated()
+            ->assertJsonPath('code', 201)
+            ->assertJsonPath('data.client_name', 'Elena Rostova');
+
+        $this->assertNotNull($response->json('data.avatar'));
     }
 
     /**

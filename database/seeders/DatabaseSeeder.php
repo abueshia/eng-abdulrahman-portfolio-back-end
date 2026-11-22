@@ -3,7 +3,7 @@
 /**
  * DatabaseSeeder
  *
- * Orchestrates the complete database seeding pipeline for Eng. Abdelrahman Abu Aishah's
+ * Orchestrates the complete database seeding pipeline for Eng. Abdelrahman Abu Eisha's
  * Portfolio CMS (Admin User, Roles & Permissions, Dynamic Settings, and Portfolio Content).
  */
 

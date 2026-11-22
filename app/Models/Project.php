@@ -3,7 +3,7 @@
 /**
  * Project Model
  *
- * Represents a software engineering project or case study in Eng. Abdelrahman Abu Aishah's
+ * Represents a software engineering project or case study in Eng. Abdelrahman Abu Eisha's
  * portfolio, including architectural challenge, technical solution, and measurable results.
  */
 

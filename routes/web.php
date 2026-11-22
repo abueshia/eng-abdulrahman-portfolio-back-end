@@ -3,7 +3,7 @@
 /**
  * Public Web Routes
  *
- * Defines localized frontend routes for Eng. Abdelrahman Abu Aishah's Portfolio
+ * Defines localized frontend routes for Eng. Abdelrahman Abu Eisha's Portfolio
  * as well as the XML sitemap endpoint.
  */
 

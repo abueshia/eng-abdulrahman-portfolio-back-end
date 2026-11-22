@@ -363,7 +363,7 @@
             <div class="dt-container dt-about-dr__grid">
                <div class="dt-about-dr__visual">
     <a href="{{ asset('front/assets/img/vvid.mp4') }}" data-fancybox data-type="html5video" class="dt-video-card">
-        <img src="{{ asset('front/assets/img/blog4.jpg') }}" alt="Eng. Abdelrahman Abu Aishah" class="dt-video-card__img" onerror="this.src='{{ asset('front/assets/img/dr.jpg') }}'">
+        <img src="{{ asset('front/assets/img/blog4.jpg') }}" alt="Eng. Abdelrahman Abu Eisha" class="dt-video-card__img" onerror="this.src='{{ asset('front/assets/img/dr.jpg') }}'">
         <div class="dt-video-card__overlay"></div>
         <span class="dt-video-card__play">
             <i class="fa-solid fa-play"></i>

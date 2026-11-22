@@ -107,4 +107,3 @@ class HomeController extends Controller
         return $this->success_response($payload, 'Home portfolio data retrieved successfully');
     }
 }
-

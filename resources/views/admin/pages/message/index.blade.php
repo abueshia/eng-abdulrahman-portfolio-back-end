@@ -77,10 +77,12 @@
                 @else
                 url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/English.json",
                 @endif
+                search: "",
+                searchPlaceholder: "{{ App::getLocale() === 'ar' ? 'بحث...' : 'Search...' }}"
             },
-            dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-end'B>>
+            dom: `<'row align-items-center mb-5'<'col-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-12 col-md-6 d-flex align-items-center justify-content-end'B>>
                   <'row'<'col-sm-12'tr>>
-                  <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+                  <'row mt-5'<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i><'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end dataTables_pager'lp>>`,
             buttons: ['print', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             order: [[0, "desc"]],

@@ -276,7 +276,7 @@ class PortfolioCoreServicesTest extends TestCase
             'service' => 'Full-Stack Development',
             'budget_range' => '$5,000 - $10,000',
             'timeline' => '2 Months',
-            'message' => 'We would like to hire Eng. Abdelrahman Abu Aishah for our SaaS platform.',
+            'message' => 'We would like to hire Eng. Abdelrahman Abu Eisha for our SaaS platform.',
             'type' => ContactMessageTypeEnum::ProjectInquiry->value,
         ], '127.0.0.1', 'PHPUnit-Agent/1.0');
 

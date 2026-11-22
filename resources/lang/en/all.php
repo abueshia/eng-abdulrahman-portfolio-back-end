@@ -201,8 +201,8 @@ return [
 
     // Dashboard, Sidebar & Header (Phase 5C)
     'Eng. Abdelrahman' => 'Eng. Abdelrahman',
-    'Eng. Abdelrahman Abu Aishah' => 'Eng. Abdelrahman Abu Aishah',
-    'Eng. Abdelrahman Abu Aishah — Portfolio CMS' => 'Eng. Abdelrahman Abu Aishah — Portfolio CMS',
+    'Eng. Abdelrahman Abu Eisha' => 'Eng. Abdelrahman Abu Eisha',
+    'Eng. Abdelrahman Abu Eisha — Portfolio CMS' => 'Eng. Abdelrahman Abu Eisha — Portfolio CMS',
     'Portfolio Administration Dashboard' => 'Portfolio Administration Dashboard',
     'Full-Stack Software Engineer (PHP Laravel & React.js)' => 'Full-Stack Software Engineer (PHP Laravel & React.js)',
     'Toggle Menu' => 'Toggle Menu',

@@ -47,6 +47,32 @@
                                 <strong>{{ \App\Helpers\TranslationHelper::translate('Rating') }}:</strong>
                                 <p class="mt-1">{{ $testimonial->rating }} / 5</p>
                             </div>
+                            <div class="col-md-4">
+                                <strong>{{ \App\Helpers\TranslationHelper::translate('Source') }}:</strong>
+                                <p class="mt-1">
+                                    @if ($testimonial->source === 'website')
+                                        <span class="badge badge-light-warning">{{ \App\Helpers\TranslationHelper::translate('Website') }}</span>
+                                    @else
+                                        <span class="badge badge-light-primary">{{ \App\Helpers\TranslationHelper::translate('Dashboard') }}</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>{{ \App\Helpers\TranslationHelper::translate('Status') }}:</strong>
+                                <p class="mt-1">
+                                    @if ($testimonial->is_active)
+                                        <span class="badge badge-light-success">{{ \App\Helpers\TranslationHelper::translate('Active') }}</span>
+                                    @else
+                                        <span class="badge badge-light-danger">{{ \App\Helpers\TranslationHelper::translate('Pending Approval') }}</span>
+                                    @endif
+                                </p>
+                            </div>
+                            @if ($testimonial->consent_at)
+                                <div class="col-md-4">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Consent Date') }}:</strong>
+                                    <p class="mt-1">{{ $testimonial->consent_at->format('Y-m-d H:i') }}</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

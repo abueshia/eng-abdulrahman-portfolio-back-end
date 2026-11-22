@@ -21,11 +21,38 @@ body {
 }
 
 div.dataTables_wrapper div.dataTables_filter {
-    text-align: right !important;
+    text-align: left !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    direction: ltr !important;
+    width: 100% !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter label {
+    direction: ltr !important;
+    text-align: left !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    text-align: left !important;
+    background-position: left 14px center !important;
+    padding-left: 2.4rem !important;
+    padding-right: 1rem !important;
+    margin: 0 !important;
+}
+
+div.dataTables_wrapper div.dt-buttons {
+    display: inline-flex !important;
+    justify-content: flex-end !important;
+    direction: ltr !important;
+    width: 100% !important;
 }
 
 table.table.dataTable {
-    direction: ltr;
+    direction: ltr !important;
 }
 
 table.table.dataTable th,

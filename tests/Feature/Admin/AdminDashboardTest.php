@@ -44,7 +44,7 @@ class AdminDashboardTest extends TestCase
         $this->seed(RoleSeeder::class);
 
         $this->superAdmin = User::factory()->create([
-            'name' => 'Eng. Abdelrahman Abu Aishah',
+            'name' => 'Eng. Abdelrahman Abu Eisha',
             'email' => 'admin@abdelrahman.dev',
             'is_admin' => true,
         ]);

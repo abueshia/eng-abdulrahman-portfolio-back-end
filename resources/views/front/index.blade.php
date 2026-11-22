@@ -2060,7 +2060,7 @@
 
                 <div class="dt-home-about-premium__visual">
                     <div class="dt-home-about-premium__frame">
-                        <img src="{{ asset('front/assets/img/blog4.jpg') }}" alt="Eng. Abdelrahman Abu Aishah"
+                        <img src="{{ asset('front/assets/img/blog4.jpg') }}" alt="Eng. Abdelrahman Abu Eisha"
                             class="dt-home-about-premium__img"
                             onerror="this.src='{{ asset('front/assets/img/dr.jpg') }}'">
                         <div class="dt-home-about-premium__overlay"></div>

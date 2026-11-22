@@ -3,7 +3,7 @@
 /**
  * Experience Model
  *
- * Represents a professional work experience entry in Eng. Abdelrahman Abu Aishah's
+ * Represents a professional work experience entry in Eng. Abdelrahman Abu Eisha's
  * software engineering career timeline.
  */
 

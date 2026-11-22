@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>{{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Aishah') }} — @yield('title', \App\Helpers\TranslationHelper::translate('Dashboard'))</title>
+    <title>{{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Eisha') }} — @yield('title', \App\Helpers\TranslationHelper::translate('Dashboard'))</title>
     <meta name="description" content="{{ $title ?? \App\Helpers\TranslationHelper::translate('Portfolio Administration Dashboard') }}" />
 
     <link rel="shortcut icon" href="{{ asset('dashboard/assets/media/logos/user.png') }}" />

@@ -91,10 +91,6 @@ class AdminController extends Controller
     /**
      * Backward-compatible alias for show().
      */
-    public function Show(int|string $id): View
-    {
-        return $this->show($id);
-    }
 
     /**
      * Show the form for creating a new administrator.

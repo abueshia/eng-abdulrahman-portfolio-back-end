@@ -201,8 +201,8 @@ return [
 
     // Dashboard, Sidebar & Header (Phase 5C)
     'Eng. Abdelrahman' => 'م. عبدالرحمن',
-    'Eng. Abdelrahman Abu Aishah' => 'م. عبدالرحمن أبو عيشة',
-    'Eng. Abdelrahman Abu Aishah — Portfolio CMS' => 'م. عبدالرحمن أبو عيشة — لوحة تحكم البورتفوليو',
+    'Eng. Abdelrahman Abu Eisha' => 'م. عبدالرحمن أبو عيشة',
+    'Eng. Abdelrahman Abu Eisha — Portfolio CMS' => 'م. عبدالرحمن أبو عيشة — لوحة تحكم البورتفوليو',
     'Portfolio Administration Dashboard' => 'لوحة تحكم وإدارة البورتفوليو',
     'Full-Stack Software Engineer (PHP Laravel & React.js)' => 'مهندس برمجيات متكامل (PHP Laravel & React.js)',
     'Toggle Menu' => 'تبديل القائمة الجانبية',

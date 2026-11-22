@@ -4,7 +4,7 @@
  * Credential Model
  *
  * Represents an academic degree, professional certification, specialized course,
- * or award earned by Eng. Abdelrahman Abu Aishah.
+ * or award earned by Eng. Abdelrahman Abu Eisha.
  */
 
 declare(strict_types=1);

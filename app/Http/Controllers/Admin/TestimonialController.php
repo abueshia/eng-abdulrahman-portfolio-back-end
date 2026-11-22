@@ -47,8 +47,9 @@ class TestimonialController extends Controller
 
         $total_reviews = $this->testimonialService->countActive();
         $average_rating = $this->testimonialService->averageRating();
+        $pending_reviews = Testimonial::query()->where('is_active', false)->where('source', 'website')->count();
 
-        return view('admin.pages.testimonial.index', compact('total_reviews', 'average_rating'));
+        return view('admin.pages.testimonial.index', compact('total_reviews', 'average_rating', 'pending_reviews'));
     }
 
     /**
@@ -59,6 +60,18 @@ class TestimonialController extends Controller
         $this->authorize('viewAny', Testimonial::class);
 
         $query = $this->testimonialService->getAdminDataTableQuery();
+
+        if ($request->filled('source') && in_array($request->input('source'), ['website', 'dashboard'], true)) {
+            $query->where('source', $request->input('source'));
+        }
+
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'pending') {
+                $query->where('is_active', false);
+            } elseif ($request->input('status') === 'active') {
+                $query->where('is_active', true);
+            }
+        }
 
         if ($request->filled('search.value')) {
             $search = (string) $request->input('search.value');
@@ -72,9 +85,27 @@ class TestimonialController extends Controller
 
         return $dataTables->eloquent($query)
             ->addIndexColumn()
-            ->editColumn('name', static fn (Testimonial $testimonial): string => e((string) $testimonial->name))
+            ->editColumn('name', static function (Testimonial $testimonial): string {
+                $avatar = $testimonial->getFirstMediaUrl('testimonials');
+                $name = e((string) ($testimonial->localized('name') ?? '-'));
+                $sub = '';
+                $job = $testimonial->localized('name_job');
+                $comp = $testimonial->localized('company_name');
+                if ($job || $comp) {
+                    $parts = array_filter([(string) $job, (string) $comp]);
+                    $sub = '<div class="text-muted fs-7">'.e(implode(' - ', $parts)).'</div>';
+                }
+
+                if ($avatar !== '') {
+                    return '<div class="d-flex align-items-center"><img src="'.e($avatar).'" class="rounded-circle me-3" width="38" height="38" style="object-fit:cover;" alt="'.$name.'"><div><span class="text-gray-800 fw-bold">'.$name.'</span>'.$sub.'</div></div>';
+                }
+
+                $initial = mb_substr((string) ($testimonial->localized('name') ?? ''), 0, 1);
+
+                return '<div class="d-flex align-items-center"><div class="symbol symbol-circle symbol-35px me-3"><span class="symbol-label bg-light-primary text-primary fw-bold">'.e($initial !== '' ? $initial : 'C').'</span></div><div><span class="text-gray-800 fw-bold">'.$name.'</span>'.$sub.'</div></div>';
+            })
             ->addColumn('project', static fn (Testimonial $testimonial): string => e((string) ($testimonial->project?->title ?? '-')))
-            ->editColumn('description', static fn (Testimonial $testimonial): string => e(Str::limit((string) $testimonial->description, 60)))
+            ->editColumn('description', static fn (Testimonial $testimonial): string => e(Str::limit((string) ($testimonial->localized('description') ?? '-'), 60)))
             ->editColumn('rating', static function (Testimonial $testimonial): string {
                 $stars = '';
                 $count = max(1, min(5, (int) $testimonial->rating));
@@ -84,12 +115,27 @@ class TestimonialController extends Controller
 
                 return $stars;
             })
-            ->editColumn('is_active', static fn (Testimonial $testimonial): string => $testimonial->is_active
-                ? '<span class="badge badge-light-success">'.e(TranslationHelper::translate('Active')).'</span>'
-                : '<span class="badge badge-light-danger">'.e(TranslationHelper::translate('Inactive')).'</span>')
+            ->editColumn('source', static function (Testimonial $testimonial): string {
+                if ($testimonial->source === 'website') {
+                    return '<span class="badge badge-light-warning"><i class="fas fa-globe text-warning me-1"></i>'.e(TranslationHelper::translate('Website')).'</span>';
+                }
+
+                return '<span class="badge badge-light-primary"><i class="fas fa-desktop text-primary me-1"></i>'.e(TranslationHelper::translate('Dashboard')).'</span>';
+            })
+            ->editColumn('is_active', static function (Testimonial $testimonial): string {
+                if ($testimonial->is_active) {
+                    return '<span class="badge badge-light-success">'.e(TranslationHelper::translate('Active')).'</span>';
+                }
+
+                if ($testimonial->source === 'website') {
+                    return '<span class="badge badge-light-danger">'.e(TranslationHelper::translate('Pending Approval')).'</span>';
+                }
+
+                return '<span class="badge badge-light-danger">'.e(TranslationHelper::translate('Inactive')).'</span>';
+            })
             ->editColumn('created_at', static fn (Testimonial $testimonial): string => $testimonial->created_at?->format('Y-m-d') ?? '-')
             ->addColumn('action', static fn (Testimonial $testimonial): string => view('admin.pages.testimonial.buttons', compact('testimonial'))->render())
-            ->rawColumns(['rating', 'is_active', 'action'])
+            ->rawColumns(['name', 'rating', 'source', 'is_active', 'action'])
             ->make(true);
     }
 

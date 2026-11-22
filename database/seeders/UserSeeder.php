@@ -3,7 +3,7 @@
 /**
  * UserSeeder
  *
- * Seeds the default administrator account for Eng. Abdelrahman Abu Aishah's Portfolio CMS.
+ * Seeds the default administrator account for Eng. Abdelrahman Abu Eisha's Portfolio CMS.
  * Credentials are read from environment variables with safe development fallbacks.
  */
 

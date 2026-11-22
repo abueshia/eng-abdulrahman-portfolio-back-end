@@ -29,7 +29,7 @@
             <!--begin::Header title-->
             <div class="d-none d-lg-flex align-items-center">
                 <span class="text-gray-700 fw-semibold fs-6">
-                    {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Aishah — Portfolio CMS') }}
+                    {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Eisha — Portfolio CMS') }}
                 </span>
             </div>
             <!--end::Header title-->

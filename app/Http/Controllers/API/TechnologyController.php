@@ -62,4 +62,3 @@ class TechnologyController extends Controller
         return $this->success_response($grouped, 'Technologies retrieved successfully');
     }
 }
-

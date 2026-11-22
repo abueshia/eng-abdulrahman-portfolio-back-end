@@ -4,8 +4,8 @@
  * Portfolio Public REST API Routes
  *
  * All routes run under the 'api' and 'ApiSetting' middleware group (no API key required).
- * Exposes read-only v1 endpoints for the standalone React (Vite) frontend and a
- * rate-limited contact submission endpoint.
+ * Exposes read-only v1 endpoints for the standalone React (Vite) frontend, rate-limited
+ * contact submission, and client testimonial/review submission endpoints.
  */
 
 declare(strict_types=1);
@@ -45,8 +45,12 @@ Route::prefix('v1')->name('api.v1.')->group(static function (): void {
     Route::get('/credentials', [CredentialController::class, 'index'])->name('credentials.index');
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
-    // Testimonials, Categories, Blogs, FAQs & Stats
+    // Testimonials (List & Client Submission)
     Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+    Route::post('/testimonials', [TestimonialController::class, 'store'])
+        ->middleware('throttle:3,60')
+        ->name('testimonials.store');
+
     Route::get('/categories', [BlogController::class, 'categories'])->name('categories.index');
 
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');

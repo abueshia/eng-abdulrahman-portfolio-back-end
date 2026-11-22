@@ -10,19 +10,19 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah — Full-Stack Software Engineer (PHP Laravel & React.js)')</title>
+    <title>@yield('title', 'المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha — Full-Stack Software Engineer (PHP Laravel & React.js)')</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('front/assets/img/favicon.png') }}" />
     <link rel="apple-touch-icon" href="{{ asset('front/assets/img/favicon.png') }}" />
     <!-- SEO & Open Graph Meta Tags -->
-    <meta name="description" content="الموقع الرسمي ومعرض أعمال المهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Aishah) — مهندس برمجيات متكامل Full-Stack بخبرة +4 سنوات في تطوير الباك إند باستخدام PHP و Laravel وبناء واجهات المستخدم الحديثة باستخدام JavaScript و React.js." />
+    <meta name="description" content="الموقع الرسمي ومعرض أعمال المهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Eisha) — مهندس برمجيات متكامل Full-Stack بخبرة +4 سنوات في تطوير الباك إند باستخدام PHP و Laravel وبناء واجهات المستخدم الحديثة باستخدام JavaScript و React.js." />
     <meta name="keywords" content="عبدالرحمن أبو عيشة, مهندس عبدالرحمن أبو عيشة, Eng Abdelrahman Abu Aishah, Software Engineer, Full Stack Developer, PHP Laravel Developer, React.js Developer, Backend Engineer, Frontend Developer, برمجة مواقع, تطوير أنظمة, لارافيل, ريأكت" />
-    <meta name="author" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah" />
+    <meta name="author" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha" />
     <meta name="robots" content="index, follow" />
     
     <!-- Open Graph (Facebook/WhatsApp) -->
-    <meta property="og:title" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah — Software Engineer" />
+    <meta property="og:title" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha — Software Engineer" />
     <meta property="og:description" content="مهندس برمجيات متكامل (PHP Laravel & React.js) بخبرة أكثر من 4 سنوات في تصميم وتطوير الأنظمة والمواقع الاحترافية." />
     <meta property="og:image" itemprop="image" content="{{ asset('front/assets/img/logo/Silver-blue.png') }}?v=4" />
     <meta property="og:image:type" content="image/png" />
@@ -30,12 +30,12 @@
     <meta property="og:image:height" content="800" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ url('/') }}" />
-    <meta property="og:site_name" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah" />
+    <meta property="og:site_name" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha" />
     <meta property="og:locale" content="ar_EG" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah — Software Engineer" />
+    <meta name="twitter:title" content="المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha — Software Engineer" />
     <meta name="twitter:description" content="معرض أعمال المهندس عبدالرحمن أبو عيشة — تطوير باك إند PHP Laravel وفرونت إند React.js." />
     <meta name="twitter:image" content="{{ asset('front/assets/img/dr_og.jpg') }}?v=3" />
 
@@ -44,7 +44,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Person",
-      "name": "المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Aishah",
+      "name": "المهندس عبدالرحمن أبو عيشة | Eng. Abdelrahman Abu Eisha",
       "jobTitle": "Full-Stack Software Engineer (PHP Laravel & React.js)",
       "image": "{{ asset('front/assets/img/dr.jpg') }}",
       "@id": "{{ url('/') }}",

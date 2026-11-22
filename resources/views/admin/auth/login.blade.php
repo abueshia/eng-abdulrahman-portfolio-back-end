@@ -12,7 +12,7 @@
                 </div>
 
                 <h1 class="text-gray-900 fs-2qx fw-bold text-center mb-4">
-                    {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Aishah') }}
+                    {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Eisha') }}
                 </h1>
                 <div class="text-gray-600 fs-4 text-center fw-semibold mw-450px">
                     {{ \App\Helpers\TranslationHelper::translate('Full-Stack Software Engineer (PHP Laravel & React.js)') }}

@@ -4,7 +4,7 @@
  * Service Model
  *
  * Represents a professional software engineering service offered by
- * Eng. Abdelrahman Abu Aishah (Backend Architecture, React.js SPAs, APIs, etc.).
+ * Eng. Abdelrahman Abu Eisha (Backend Architecture, React.js SPAs, APIs, etc.).
  */
 
 declare(strict_types=1);

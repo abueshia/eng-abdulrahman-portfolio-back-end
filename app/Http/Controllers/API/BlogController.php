@@ -82,4 +82,3 @@ class BlogController extends Controller
         return $this->success_response($payload, 'Blog details retrieved successfully');
     }
 }
-

@@ -5,7 +5,7 @@
         <div class="text-gray-900 order-2 order-md-1">
             <span class="text-muted fw-semibold me-1">{{ date('Y') }} &copy;</span>
             <a href="{{ url('/') }}" target="_blank" rel="noopener" class="text-gray-800 text-hover-primary fw-bold">
-                {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Aishah') }}
+                {{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Eisha') }}
             </a>
         </div>
         <!--end::Copyright-->

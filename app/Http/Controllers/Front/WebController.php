@@ -50,7 +50,7 @@ class WebController extends Controller
     }
 
     /**
-     * Display the about page for Eng. Abdelrahman Abu Aishah.
+     * Display the about page for Eng. Abdelrahman Abu Eisha.
      */
     public function about(): View
     {
@@ -137,7 +137,7 @@ class WebController extends Controller
             if ($request->message) {
                 $htmlContent .= '<p><strong>تفاصيل المشروع / الرسالة:</strong> '.e((string) $request->message).'</p>';
             }
-            $htmlContent .= "<br><hr><p style='font-size: 12px; color: #777;'>هذه الرسالة تم إرسالها تلقائياً من موقع المهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Aishah Portfolio).</p></div>";
+            $htmlContent .= "<br><hr><p style='font-size: 12px; color: #777;'>هذه الرسالة تم إرسالها تلقائياً من موقع المهندس عبدالرحمن أبو عيشة (Eng. Abdelrahman Abu Eisha Portfolio).</p></div>";
 
             Mail::html($htmlContent, static function ($mail): void {
                 $mail->to(config('mail.from.address', 'info@abdelrahman-portfolio.com'))

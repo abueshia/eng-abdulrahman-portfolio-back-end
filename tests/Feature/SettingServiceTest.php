@@ -43,7 +43,7 @@ class SettingServiceTest extends TestCase
         $this->assertSame(SettingGroupEnum::General, $ownerKey->group());
         $this->assertSame(SettingTypeEnum::Text, $ownerKey->type());
         $this->assertTrue($ownerKey->isTranslatable());
-        $this->assertSame('Eng. Abdelrahman Abu Aishah', $ownerKey->defaultForLocale('en'));
+        $this->assertSame('Eng. Abdelrahman Abu Eisha', $ownerKey->defaultForLocale('en'));
         $this->assertSame('مهندس / عبدالرحمن أبو عيشة', $ownerKey->defaultForLocale('ar'));
 
         $visibilityKey = SettingKeyEnum::ShowProjectsSection;
@@ -63,7 +63,7 @@ class SettingServiceTest extends TestCase
 
         // 1. When DB is empty, fallback default from SettingKeyEnum is returned and cache is populated
         $this->assertSame(
-            'Eng. Abdelrahman Abu Aishah',
+            'Eng. Abdelrahman Abu Eisha',
             $service->get(SettingKeyEnum::OwnerName, 'en')
         );
         $this->assertTrue(Cache::has(SettingService::CACHE_KEY));
@@ -74,7 +74,7 @@ class SettingServiceTest extends TestCase
             'key' => SettingKeyEnum::OwnerName->value,
             'value' => [
                 'ar' => 'م. عبدالرحمن أبو عيشة - محدث',
-                'en' => 'Eng. Abdelrahman Abu Aishah - Updated',
+                'en' => 'Eng. Abdelrahman Abu Eisha - Updated',
             ],
             'type' => SettingTypeEnum::Text,
             'is_translatable' => true,
@@ -83,14 +83,14 @@ class SettingServiceTest extends TestCase
         $this->assertFalse(Cache::has(SettingService::CACHE_KEY));
 
         // 3. Subsequent read re-populates cache with the new value
-        $this->assertSame('Eng. Abdelrahman Abu Aishah - Updated', setting('owner_name', 'en'));
+        $this->assertSame('Eng. Abdelrahman Abu Eisha - Updated', setting('owner_name', 'en'));
         $this->assertSame('م. عبدالرحمن أبو عيشة - محدث', setting('owner_name', 'ar'));
         $this->assertTrue(Cache::has(SettingService::CACHE_KEY));
 
         // 4. Deleting the setting flushes the cache again and reverts to SettingKeyEnum default
         $setting->delete();
         $this->assertFalse(Cache::has(SettingService::CACHE_KEY));
-        $this->assertSame('Eng. Abdelrahman Abu Aishah', setting('owner_name', 'en'));
+        $this->assertSame('Eng. Abdelrahman Abu Eisha', setting('owner_name', 'en'));
     }
 
     /**

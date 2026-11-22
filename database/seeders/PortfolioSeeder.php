@@ -4,7 +4,7 @@
  * PortfolioSeeder
  *
  * Seeds realistic bilingual (Arabic & English) portfolio data for
- * Eng. Abdelrahman Abu Aishah (Full-Stack Software Engineer: PHP Laravel & React.js, 4+ Years Exp).
+ * Eng. Abdelrahman Abu Eisha (Full-Stack Software Engineer: PHP Laravel & React.js, 4+ Years Exp).
  */
 
 declare(strict_types=1);
@@ -163,7 +163,7 @@ class PortfolioSeeder extends Seeder
     }
 
     /**
-     * Seed core technologies in Eng. Abdelrahman Abu Aishah's stack.
+     * Seed core technologies in Eng. Abdelrahman Abu Eisha's stack.
      *
      * @return array<string, Technology>
      */
@@ -787,7 +787,7 @@ class PortfolioSeeder extends Seeder
                 ],
                 'description' => [
                     'ar' => 'المهندس عبدالرحمن أبو عيشة من أفضل مهندسي البرمجيات الذين تعاملنا معهم؛ كود Laravel و React منظم للغاية ومكتوب بمعايير SOLID واضحة سهّلت على فريقنا التوسع في المشروع.',
-                    'en' => 'Eng. Abdelrahman Abu Aishah is an exceptional Full-Stack Engineer. His Laravel and React codebase follows strict SOLID and Repository patterns, making our platform effortless to scale.',
+                    'en' => 'Eng. Abdelrahman Abu Eisha is an exceptional Full-Stack Engineer. His Laravel and React codebase follows strict SOLID and Repository patterns, making our platform effortless to scale.',
                 ],
             ],
             [
@@ -832,7 +832,7 @@ class PortfolioSeeder extends Seeder
                 'category' => 'architecture',
                 'question' => [
                     'ar' => 'ما هي التقنيات الأساسية التي يعتمد عليها م. عبدالرحمن أبو عيشة؟',
-                    'en' => 'What is Eng. Abdelrahman Abu Aishah’s core technology stack?',
+                    'en' => 'What is Eng. Abdelrahman Abu Eisha’s core technology stack?',
                 ],
                 'answer' => [
                     'ar' => 'أتخصص في تطوير الباك إند باستخدام PHP 8.3 و Laravel 10 مع قواعد بيانات MySQL و Redis، وتطوير الواجهات الأمامية باستخدام HTML5, CSS3, Bootstrap 5, JavaScript ES6+ ومكتبة React.js.',

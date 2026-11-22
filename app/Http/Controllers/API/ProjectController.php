@@ -65,4 +65,3 @@ class ProjectController extends Controller
         return $this->success_response($payload, 'Project details retrieved successfully');
     }
 }
-

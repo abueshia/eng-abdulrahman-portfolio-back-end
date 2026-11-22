@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Aishah') }} — {{ \App\Helpers\TranslationHelper::translate('Log In') }}</title>
-    <meta name="description" content="Eng. Abdelrahman Abu Aishah Portfolio Administration Dashboard" />
+    <title>{{ \App\Helpers\TranslationHelper::translate('Eng. Abdelrahman Abu Eisha') }} — {{ \App\Helpers\TranslationHelper::translate('Log In') }}</title>
+    <meta name="description" content="Eng. Abdelrahman Abu Eisha Portfolio Administration Dashboard" />
     <link rel="shortcut icon" href="{{ asset('dashboard/assets/media/logos/user.png') }}" />
 
     <!--begin::Fonts-->

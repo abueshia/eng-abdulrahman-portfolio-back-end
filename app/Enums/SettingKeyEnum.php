@@ -261,11 +261,11 @@ enum SettingKeyEnum: string
             // General
             self::SiteName => [
                 'ar' => 'م. عبدالرحمن أبو عيشة | مهندس برمجيات Full-Stack',
-                'en' => 'Eng. Abdelrahman Abu Aishah | Full-Stack Software Engineer',
+                'en' => 'Eng. Abdelrahman Abu Eisha | Full-Stack Software Engineer',
             ],
             self::OwnerName => [
                 'ar' => 'مهندس / عبدالرحمن أبو عيشة',
-                'en' => 'Eng. Abdelrahman Abu Aishah',
+                'en' => 'Eng. Abdelrahman Abu Eisha',
             ],
             self::JobTitle => [
                 'ar' => 'مهندس برمجيات متكامل (PHP Laravel & React.js)',
@@ -279,7 +279,7 @@ enum SettingKeyEnum: string
             // Hero & CV
             self::HeroGreeting => [
                 'ar' => 'مرحباً، أنا المهندس عبدالرحمن أبو عيشة',
-                'en' => 'Hello, I am Eng. Abdelrahman Abu Aishah',
+                'en' => 'Hello, I am Eng. Abdelrahman Abu Eisha',
             ],
             self::HeroHeadline => [
                 'ar' => 'أبني أنظمة باك إند قوية بـ PHP Laravel وواجهات تفاعلية حديثة بـ React.js',
@@ -310,7 +310,7 @@ enum SettingKeyEnum: string
             // About
             self::AboutTitle => [
                 'ar' => 'نبذة عن المهندس عبدالرحمن أبو عيشة',
-                'en' => 'About Eng. Abdelrahman Abu Aishah',
+                'en' => 'About Eng. Abdelrahman Abu Eisha',
             ],
             self::AboutSubtitle => [
                 'ar' => 'مهندس برمجيات متكامل بخبرة +4 سنوات في PHP Laravel و React.js',
@@ -347,11 +347,11 @@ enum SettingKeyEnum: string
             // SEO
             self::SeoMetaTitle => [
                 'ar' => 'م. عبدالرحمن أبو عيشة | مهندس برمجيات PHP Laravel & React.js',
-                'en' => 'Eng. Abdelrahman Abu Aishah | Full-Stack Software Engineer (PHP Laravel & React)',
+                'en' => 'Eng. Abdelrahman Abu Eisha | Full-Stack Software Engineer (PHP Laravel & React)',
             ],
             self::SeoMetaDescription => [
                 'ar' => 'الموقع الرسمي ومعرض الأعمال للمهندس عبدالرحمن أبو عيشة — مهندس برمجيات Full-Stack متخصص في تطوير الأنظمة بـ PHP Laravel والواجهات الأمامية بـ React.js بخبرة +4 سنوات.',
-                'en' => 'Official portfolio of Eng. Abdelrahman Abu Aishah — Full-Stack Software Engineer specializing in PHP 8.3, Laravel, RESTful APIs, and React.js with 4+ years of experience.',
+                'en' => 'Official portfolio of Eng. Abdelrahman Abu Eisha — Full-Stack Software Engineer specializing in PHP 8.3, Laravel, RESTful APIs, and React.js with 4+ years of experience.',
             ],
             self::SeoMetaKeywords => [
                 'ar' => 'عبدالرحمن أبو عيشة, مهندس برمجيات, مبرمج PHP, مبرمج Laravel, مطور React, مطور Full Stack, تصميم وتطوير مواقع, برمجة أنظمة ولوحات تحكم, RESTful APIs',

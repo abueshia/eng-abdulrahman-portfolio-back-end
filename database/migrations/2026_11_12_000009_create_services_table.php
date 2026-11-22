@@ -3,7 +3,7 @@
 /**
  * Create Services Table Migration
  *
- * Stores software engineering services offered by Eng. Abdelrahman Abu Aishah.
+ * Stores software engineering services offered by Eng. Abdelrahman Abu Eisha.
  */
 
 declare(strict_types=1);

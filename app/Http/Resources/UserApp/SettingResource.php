@@ -30,4 +30,3 @@ class SettingResource extends JsonResource
         return (array) $this->resource;
     }
 }
-
