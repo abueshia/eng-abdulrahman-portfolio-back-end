@@ -193,15 +193,16 @@ class Project extends Model implements HasMedia
     }
 
     /**
-     * Scope a query to order projects chronologically with newest first.
-     * Orders primarily by completion date, then by creation date and ID.
+     * Scope a query to order projects: featured projects first, then newest first.
+     * Orders primarily by featured status, then completion/creation date, and ID.
      *
      * @param  Builder<Project>  $query
      * @return Builder<Project>
      */
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderByRaw('COALESCE(completed_at, created_at) DESC')
+        return $query->orderByDesc('is_featured')
+            ->orderByRaw('COALESCE(completed_at, created_at) DESC')
             ->orderByDesc('id');
     }
 }

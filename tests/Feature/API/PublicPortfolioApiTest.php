@@ -593,37 +593,70 @@ class PublicPortfolioApiTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        // 1. Projects: Older completed project vs Newest completed project
+        // 1. Projects: Featured first, then newest first
         Project::query()->create([
             'category_id' => $category->id,
-            'title' => ['ar' => 'مشروع قديم 2022', 'en' => 'Old Project 2022'],
+            'title' => ['ar' => 'مشروع عادي قديم 2022', 'en' => 'Regular Old Project 2022'],
             'slug' => 'old-project-2022',
             'short_description' => ['ar' => 'قديم', 'en' => 'Old'],
             'description' => ['ar' => 'قديم', 'en' => 'Old'],
             'project_type' => ProjectTypeEnum::WebApp,
             'status' => ProjectStatusEnum::Published,
             'completed_at' => '2022-01-01',
+            'is_featured' => false,
             'is_active' => true,
             'sort_order' => 1,
         ]);
 
         Project::query()->create([
             'category_id' => $category->id,
-            'title' => ['ar' => 'مشروع حديث 2024', 'en' => 'New Project 2024'],
+            'title' => ['ar' => 'مشروع عادي حديث 2024', 'en' => 'Regular New Project 2024'],
             'slug' => 'new-project-2024',
             'short_description' => ['ar' => 'حديث', 'en' => 'New'],
             'description' => ['ar' => 'حديث', 'en' => 'New'],
             'project_type' => ProjectTypeEnum::FullStack,
             'status' => ProjectStatusEnum::Published,
             'completed_at' => '2024-06-01',
+            'is_featured' => false,
             'is_active' => true,
             'sort_order' => 5,
+        ]);
+
+        Project::query()->create([
+            'category_id' => $category->id,
+            'title' => ['ar' => 'مشروع مميز أقدم 2023', 'en' => 'Featured Older Project 2023'],
+            'slug' => 'featured-project-2023',
+            'short_description' => ['ar' => 'مميز', 'en' => 'Featured'],
+            'description' => ['ar' => 'مميز', 'en' => 'Featured'],
+            'project_type' => ProjectTypeEnum::Saas,
+            'status' => ProjectStatusEnum::Published,
+            'completed_at' => '2023-01-01',
+            'is_featured' => true,
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+
+        Project::query()->create([
+            'category_id' => $category->id,
+            'title' => ['ar' => 'مشروع مميز أحدث 2025', 'en' => 'Featured Newest Project 2025'],
+            'slug' => 'featured-project-2025',
+            'short_description' => ['ar' => 'مميز حديث', 'en' => 'Featured New'],
+            'description' => ['ar' => 'مميز حديث', 'en' => 'Featured New'],
+            'project_type' => ProjectTypeEnum::FullStack,
+            'status' => ProjectStatusEnum::Published,
+            'completed_at' => '2025-01-01',
+            'is_featured' => true,
+            'is_active' => true,
+            'sort_order' => 3,
         ]);
 
         $projectsResponse = $this->getJson('/api/v1/projects?lang=en');
         $projectsResponse->assertOk();
         $projectSlugs = collect($projectsResponse->json('data'))->pluck('slug')->all();
-        $this->assertSame('new-project-2024', $projectSlugs[0]);
+        $this->assertSame('featured-project-2025', $projectSlugs[0]);
+        $this->assertSame('featured-project-2023', $projectSlugs[1]);
+        $this->assertSame('new-project-2024', $projectSlugs[2]);
+        $this->assertSame('old-project-2022', $projectSlugs[3]);
 
         // 2. Experiences: Old past job vs Recent past job vs Current job
         Experience::query()->create([
