@@ -77,7 +77,9 @@ class ExperienceService
     public function getAllForReorder(): Collection
     {
         /** @var Collection<int, Experience> $experiences */
-        $experiences = $this->experienceRepository->all(['*'], ['technologies', 'media']);
+        $experiences = $this->experienceRepository->all(['*'], ['technologies', 'media'])
+            ->sortBy('sort_order')
+            ->values();
 
         return $experiences;
     }

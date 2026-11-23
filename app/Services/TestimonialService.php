@@ -104,7 +104,9 @@ class TestimonialService
     public function getAllForReorder(): Collection
     {
         /** @var Collection<int, Testimonial> $testimonials */
-        $testimonials = $this->testimonialRepository->all(['*'], ['project', 'media']);
+        $testimonials = $this->testimonialRepository->all(['*'], ['project', 'media'])
+            ->sortBy('sort_order')
+            ->values();
 
         return $testimonials;
     }

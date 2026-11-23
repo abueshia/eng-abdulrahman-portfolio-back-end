@@ -141,15 +141,16 @@ class Experience extends Model implements HasMedia
     }
 
     /**
-     * Scope a query to order experiences chronologically (current first, then by sort_order and start_date).
+     * Scope a query to order experiences chronologically (current roles first, then newest start date, end date, and id).
      *
      * @param  Builder<Experience>  $query
      * @return Builder<Experience>
      */
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderBy('sort_order', 'asc')
-            ->orderByDesc('is_current')
-            ->orderByDesc('start_date');
+        return $query->orderByDesc('is_current')
+            ->orderByDesc('start_date')
+            ->orderByDesc('end_date')
+            ->orderByDesc('id');
     }
 }

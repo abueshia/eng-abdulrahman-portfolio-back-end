@@ -582,6 +582,123 @@ class PublicPortfolioApiTest extends TestCase
     }
 
     /**
+     * Verify that projects, experiences, and testimonials are returned in reverse chronological (newest first) order.
+     */
+    public function test_public_endpoints_return_items_in_reverse_chronological_newest_first_order(): void
+    {
+        $category = Category::query()->create([
+            'name' => ['ar' => 'تصنيف تجريبي', 'en' => 'Test Category'],
+            'slug' => 'test-category-order',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        // 1. Projects: Older completed project vs Newest completed project
+        Project::query()->create([
+            'category_id' => $category->id,
+            'title' => ['ar' => 'مشروع قديم 2022', 'en' => 'Old Project 2022'],
+            'slug' => 'old-project-2022',
+            'short_description' => ['ar' => 'قديم', 'en' => 'Old'],
+            'description' => ['ar' => 'قديم', 'en' => 'Old'],
+            'project_type' => ProjectTypeEnum::WebApp,
+            'status' => ProjectStatusEnum::Published,
+            'completed_at' => '2022-01-01',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        Project::query()->create([
+            'category_id' => $category->id,
+            'title' => ['ar' => 'مشروع حديث 2024', 'en' => 'New Project 2024'],
+            'slug' => 'new-project-2024',
+            'short_description' => ['ar' => 'حديث', 'en' => 'New'],
+            'description' => ['ar' => 'حديث', 'en' => 'New'],
+            'project_type' => ProjectTypeEnum::FullStack,
+            'status' => ProjectStatusEnum::Published,
+            'completed_at' => '2024-06-01',
+            'is_active' => true,
+            'sort_order' => 5,
+        ]);
+
+        $projectsResponse = $this->getJson('/api/v1/projects?lang=en');
+        $projectsResponse->assertOk();
+        $projectSlugs = collect($projectsResponse->json('data'))->pluck('slug')->all();
+        $this->assertSame('new-project-2024', $projectSlugs[0]);
+
+        // 2. Experiences: Old past job vs Recent past job vs Current job
+        Experience::query()->create([
+            'company_name' => ['ar' => 'شركة قديمة', 'en' => 'Old Company 2021'],
+            'role_title' => ['ar' => 'مطور متدرب', 'en' => 'Junior Developer'],
+            'summary' => ['ar' => 'ملخص قديم', 'en' => 'Old summary'],
+            'employment_type' => EmploymentTypeEnum::Contract,
+            'start_date' => '2021-01-01',
+            'end_date' => '2021-12-31',
+            'is_current' => false,
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        Experience::query()->create([
+            'company_name' => ['ar' => 'شركة متوسطة', 'en' => 'Mid Company 2023'],
+            'role_title' => ['ar' => 'مطور برمجيات', 'en' => 'Software Engineer'],
+            'summary' => ['ar' => 'ملخص متوسط', 'en' => 'Mid summary'],
+            'employment_type' => EmploymentTypeEnum::FullTime,
+            'start_date' => '2022-01-01',
+            'end_date' => '2023-12-31',
+            'is_current' => false,
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+
+        Experience::query()->create([
+            'company_name' => ['ar' => 'شركة حديثة حالية', 'en' => 'Current Senior Role 2024'],
+            'role_title' => ['ar' => 'مهندس أول', 'en' => 'Senior Full-Stack Engineer'],
+            'summary' => ['ar' => 'ملخص حالي', 'en' => 'Current summary'],
+            'employment_type' => EmploymentTypeEnum::FullTime,
+            'start_date' => '2024-01-01',
+            'end_date' => null,
+            'is_current' => true,
+            'is_active' => true,
+            'sort_order' => 6,
+        ]);
+
+        $expResponse = $this->getJson('/api/v1/experiences?lang=en');
+        $expResponse->assertOk();
+        $expCompanies = collect($expResponse->json('data'))->pluck('company_name')->all();
+        $this->assertSame('Current Senior Role 2024', $expCompanies[0]);
+        $this->assertSame('Mid Company 2023', $expCompanies[1]);
+        $this->assertSame('Old Company 2021', $expCompanies[2]);
+
+        // 3. Testimonials: Older testimonial vs Newer testimonial
+        Testimonial::query()->create([
+            'name' => ['ar' => 'عميل قديم', 'en' => 'Old Client 2022'],
+            'name_job' => ['ar' => 'مدير', 'en' => 'Manager'],
+            'company_name' => ['ar' => 'شركة قديمة', 'en' => 'Old Corp'],
+            'description' => ['ar' => 'تقييم قديم', 'en' => 'Old review'],
+            'rating' => 5,
+            'is_active' => true,
+            'sort_order' => 1,
+            'created_at' => now()->subMonths(6),
+        ]);
+
+        Testimonial::query()->create([
+            'name' => ['ar' => 'عميل حديث', 'en' => 'New Client 2024'],
+            'name_job' => ['ar' => 'مدير تنفيذي', 'en' => 'CEO'],
+            'company_name' => ['ar' => 'شركة حديثة', 'en' => 'New Corp'],
+            'description' => ['ar' => 'تقييم حديث', 'en' => 'New review'],
+            'rating' => 5,
+            'is_active' => true,
+            'sort_order' => 9,
+            'created_at' => now(),
+        ]);
+
+        $testimonialsResponse = $this->getJson('/api/v1/testimonials?lang=en');
+        $testimonialsResponse->assertOk();
+        $clientNames = collect($testimonialsResponse->json('data'))->pluck('client_name')->all();
+        $this->assertSame('New Client 2024', $clientNames[0]);
+    }
+
+    /**
      * Seed a complete set of active/published portfolio records for API verification.
      *
      * @return array{category: Category, tech: Technology, publishedProject: Project, publishedBlog: Blog}

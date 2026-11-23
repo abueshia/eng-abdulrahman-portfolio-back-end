@@ -193,13 +193,15 @@ class Project extends Model implements HasMedia
     }
 
     /**
-     * Scope a query to order projects by sort_order and completion date.
+     * Scope a query to order projects chronologically with newest first.
+     * Orders primarily by completion date, then by creation date and ID.
      *
      * @param  Builder<Project>  $query
      * @return Builder<Project>
      */
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderBy('sort_order', 'asc')->orderByDesc('completed_at')->orderByDesc('id');
+        return $query->orderByRaw('COALESCE(completed_at, created_at) DESC')
+            ->orderByDesc('id');
     }
 }

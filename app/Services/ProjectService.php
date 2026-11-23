@@ -147,7 +147,9 @@ class ProjectService
     public function getAllForReorder(): Collection
     {
         /** @var Collection<int, Project> $projects */
-        $projects = $this->projectRepository->all(['*'], ['category', 'media']);
+        $projects = $this->projectRepository->all(['*'], ['category', 'media'])
+            ->sortBy('sort_order')
+            ->values();
 
         return $projects;
     }

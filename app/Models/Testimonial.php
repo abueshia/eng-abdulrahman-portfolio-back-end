@@ -152,14 +152,15 @@ class Testimonial extends Model implements HasMedia
     }
 
     /**
-     * Scope a query to order testimonials by sort_order.
+     * Scope a query to order testimonials with newest reviews first.
      *
      * @param  Builder<Testimonial>  $query
      * @return Builder<Testimonial>
      */
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderBy('sort_order', 'asc')->orderBy('id', 'asc');
+        return $query->orderByDesc('created_at')
+            ->orderByDesc('id');
     }
 
     /**
