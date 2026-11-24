@@ -53,7 +53,8 @@ class TestimonialResource extends JsonResource
             'source' => (string) ($this->source ?? 'dashboard'),
             'avatar' => $absoluteAvatar,
             'project' => $this->whenLoaded('project', function () use ($locale): ?array {
-                if ($this->project === null) {
+                // Never expose a link to an archived, draft or inactive project (it would 404).
+                if ($this->project === null || ! $this->project->isPublished()) {
                     return null;
                 }
 

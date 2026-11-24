@@ -33,4 +33,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    | Vercel Deploy Hook used to rebuild the static React frontend after public
+    | portfolio content changes. Leave the URL empty to disable the trigger.
+    */
+    'vercel' => [
+        'deploy_hook_url' => env('VERCEL_DEPLOY_HOOK_URL'),
+        'deploy_hook_debounce_seconds' => (int) env('VERCEL_DEPLOY_HOOK_DEBOUNCE_SECONDS', 60),
+    ],
+
 ];

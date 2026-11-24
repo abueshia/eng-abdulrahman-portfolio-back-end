@@ -62,7 +62,7 @@ class ProjectResource extends JsonResource
             'slug' => $this->slug,
             'short_description' => $this->getTranslation('short_description', $locale),
             'description' => $this->getTranslation('description', $locale),
-            'challenge' => $this->getTranslation('challenge', $locale),
+            'challenge' => $this->challengeItems($this->getTranslation('challenge', $locale)),
             'solution' => $this->getTranslation('solution', $locale),
             'results' => $this->getTranslation('results', $locale),
             'metrics' => $this->metrics,
@@ -85,5 +85,39 @@ class ProjectResource extends JsonResource
             'technologies' => TechnologyResource::collection($this->whenLoaded('technologies')),
             'testimonials' => TestimonialResource::collection($this->whenLoaded('testimonials')),
         ];
+    }
+
+    /**
+     * Normalize the localized challenge value into a list of `{title, description}` items.
+     *
+     * Always returns an array: empty when there is no challenge, and a single item
+     * (with an empty title) for legacy plain-text values.
+     *
+     * @return array<int, array{title: string, description: string}>
+     */
+    private function challengeItems(mixed $raw): array
+    {
+        if (is_string($raw)) {
+            return trim($raw) === '' ? [] : [['title' => '', 'description' => $raw]];
+        }
+
+        if (! is_array($raw)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($raw as $item) {
+            if (is_string($item) && trim($item) !== '') {
+                $items[] = ['title' => '', 'description' => $item];
+            } elseif (is_array($item)) {
+                $items[] = [
+                    'title' => is_scalar($item['title'] ?? null) ? (string) $item['title'] : '',
+                    'description' => is_scalar($item['description'] ?? null) ? (string) $item['description'] : '',
+                ];
+            }
+        }
+
+        return $items;
     }
 }

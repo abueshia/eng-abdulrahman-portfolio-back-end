@@ -19,6 +19,9 @@ class PaginationCollection extends ResourceCollection
     /**
      * Transform the pagination metadata into an array.
      *
+     * Page links are generated through the paginator itself, so any query string
+     * appended to it (e.g. `lang`, `per_page`, filters) is preserved on every link.
+     *
      * @param  Request  $request
      * @return array<string, mixed>
      */
@@ -26,14 +29,13 @@ class PaginationCollection extends ResourceCollection
     {
         $options = $this->resource->getOptions();
         $path = (string) ($options['path'] ?? $request->url());
-        $pageName = (string) ($options['pageName'] ?? 'page');
 
         return [
             'current_page' => $this->resource->currentPage(),
-            'first_page_url' => $path.'?'.$pageName.'=1',
+            'first_page_url' => $this->resource->url(1),
             'prev_page_url' => $this->resource->previousPageUrl() ?? '',
             'next_page_url' => $this->resource->nextPageUrl() ?? '',
-            'last_page_url' => $path.'?'.$pageName.'='.$this->resource->lastPage(),
+            'last_page_url' => $this->resource->url($this->resource->lastPage()),
             'total_pages' => $this->resource->lastPage(),
             'per_page' => $this->resource->perPage(),
             'total_items' => $this->resource->total(),

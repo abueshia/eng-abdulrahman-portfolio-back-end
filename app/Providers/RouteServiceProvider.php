@@ -22,18 +22,30 @@ class RouteServiceProvider extends ServiceProvider
     public const HOME = '/admin';
 
     /**
+     * Maximum public API read requests (GET/HEAD) per minute per IP address.
+     */
+    public const PUBLIC_API_READS_PER_MINUTE = 120;
+
+    /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // Light global limit for public read endpoints. Write endpoints (POST) keep
+        // their own stricter route-level throttles, so they are not counted here.
+        RateLimiter::for('api', static function (Request $request): Limit {
+            if (! in_array($request->method(), ['GET', 'HEAD'], true)) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute(self::PUBLIC_API_READS_PER_MINUTE)->by((string) $request->ip());
         });
 
         $this->routes(function (): void {
-            Route::middleware('api')
+            // Both middleware must be passed in one call: a second `middleware()`
+            // call on the registrar replaces the first one instead of merging.
+            Route::middleware(['api', 'ApiSetting'])
                 ->prefix('api')
-                ->middleware('ApiSetting')
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('web')

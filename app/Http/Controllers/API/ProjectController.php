@@ -37,6 +37,8 @@ class ProjectController extends Controller
         $filters = $request->only(['type', 'category', 'category_id', 'technology', 'technology_id', 'featured']);
 
         $paginator = $this->projectService->paginatePublished($perPage, $filters);
+        // Keep `lang`, `per_page` and every filter on the generated page links.
+        $paginator->appends($request->query());
         $data = ProjectResource::collection($paginator);
         $pagination = new PaginationCollection($paginator);
 

@@ -169,6 +169,18 @@ class Project extends Model implements HasMedia
     }
 
     /**
+     * Determine whether the project is publicly visible (mirrors `scopePublished`).
+     */
+    public function isPublished(): bool
+    {
+        $status = $this->status instanceof ProjectStatusEnum
+            ? $this->status
+            : ProjectStatusEnum::tryFrom((string) $this->status);
+
+        return (bool) $this->is_active && $status === ProjectStatusEnum::Published;
+    }
+
+    /**
      * Scope a query to only include featured projects.
      *
      * @param  Builder<Project>  $query

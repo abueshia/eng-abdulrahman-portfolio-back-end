@@ -136,28 +136,31 @@ class StorePublicTestimonialRequest extends BasePortfolioFormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $v): void {
+            $nameAttribute = $v->getDisplayableAttribute('name');
+            $descriptionAttribute = $v->getDisplayableAttribute('description');
+
             $name = $this->input('name');
             if (is_string($name)) {
                 $len = mb_strlen(trim($name));
                 if ($len < 2) {
-                    $v->errors()->add('name', __('portfolio_validation.messages.min_string', ['min' => 2]));
+                    $v->errors()->add('name', __('portfolio_validation.messages.min_string', ['attribute' => $nameAttribute, 'min' => 2]));
                 } elseif ($len > 80) {
-                    $v->errors()->add('name', __('portfolio_validation.messages.max_string', ['max' => 80]));
+                    $v->errors()->add('name', __('portfolio_validation.messages.max_string', ['attribute' => $nameAttribute, 'max' => 80]));
                 }
             } elseif (is_array($name) && empty($name['ar']) && empty($name['en'])) {
-                $v->errors()->add('name', __('portfolio_validation.messages.required'));
+                $v->errors()->add('name', __('portfolio_validation.messages.required', ['attribute' => $nameAttribute]));
             }
 
             $desc = $this->input('description');
             if (is_string($desc)) {
                 $len = mb_strlen(trim($desc));
                 if ($len < 10) {
-                    $v->errors()->add('description', __('portfolio_validation.messages.min_string', ['min' => 10]));
+                    $v->errors()->add('description', __('portfolio_validation.messages.min_string', ['attribute' => $descriptionAttribute, 'min' => 10]));
                 } elseif ($len > 1000) {
-                    $v->errors()->add('description', __('portfolio_validation.messages.max_string', ['max' => 1000]));
+                    $v->errors()->add('description', __('portfolio_validation.messages.max_string', ['attribute' => $descriptionAttribute, 'max' => 1000]));
                 }
             } elseif (is_array($desc) && empty($desc['ar']) && empty($desc['en'])) {
-                $v->errors()->add('description', __('portfolio_validation.messages.required'));
+                $v->errors()->add('description', __('portfolio_validation.messages.required', ['attribute' => $descriptionAttribute]));
             }
         });
     }
