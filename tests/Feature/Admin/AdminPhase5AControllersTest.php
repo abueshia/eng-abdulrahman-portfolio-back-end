@@ -25,6 +25,7 @@ use App\Models\User;
 use App\Services\ServiceCatalogService;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class AdminPhase5AControllersTest extends TestCase
@@ -160,6 +161,19 @@ class AdminPhase5AControllersTest extends TestCase
 
         $this->assertSame(1, $project2->fresh()->sort_order);
         $this->assertSame(2, $project->fresh()->sort_order);
+
+        // Gallery media deletion via AJAX endpoint
+        $galleryFile = UploadedFile::fake()->image('screenshot.png', 400, 300);
+        $project->storeFiles([$galleryFile], '_gallery');
+        $mediaItem = $project->fresh()->getMedia('projects_gallery')->first();
+        $this->assertNotNull($mediaItem);
+
+        $this->actingAs($this->superAdmin, 'admin')
+            ->deleteJson("/en/admin/project/{$project->id}/media/{$mediaItem->id}")
+            ->assertOk()
+            ->assertJsonPath('status', 'success');
+
+        $this->assertCount(0, $project->fresh()->getMedia('projects_gallery'));
 
         // Destroy
         $this->actingAs($this->superAdmin, 'admin')

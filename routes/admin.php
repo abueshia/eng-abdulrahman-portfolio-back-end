@@ -79,6 +79,7 @@ Route::group(
                 Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
                 Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
                 Route::put('/{project}', [ProjectController::class, 'update'])->name('project.update');
+                Route::delete('/{project}/media/{media}', [ProjectController::class, 'deleteMedia'])->name('project.media.destroy');
                 Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
             });
 

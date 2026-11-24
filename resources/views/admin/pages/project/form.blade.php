@@ -202,7 +202,11 @@
                                         <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                     @enderror
                                     @if ($project->exists && $project->getFirstMediaUrl('projects'))
-                                        <img src="{{ $project->getFirstMediaUrl('projects') }}" alt="cover" class="mt-3 rounded" width="120"/>
+                                        <div class="mt-3">
+                                            <a href="{{ $project->getFirstMediaUrl('projects') }}" target="_blank">
+                                                <img src="{{ $project->getFirstMediaUrl('projects') }}" alt="cover" class="rounded border shadow-sm" width="130" style="height: 80px; object-fit: cover;"/>
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
 
@@ -212,6 +216,33 @@
                                     @error('gallery.*')
                                         <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                     @enderror
+
+                                    @if ($project->exists && $project->getMedia('projects_gallery')->isNotEmpty())
+                                        <div class="mt-3">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <span class="fs-7 fw-bold text-gray-700">
+                                                    {{ \App\Helpers\TranslationHelper::translate('Current Gallery Screenshots') }} ({{ $project->getMedia('projects_gallery')->count() }}):
+                                                </span>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-3">
+                                                @foreach ($project->getMedia('projects_gallery') as $galleryMedia)
+                                                    <div class="position-relative border rounded p-1 shadow-sm bg-white gallery-item-{{ $galleryMedia->id }}" style="width: 100px;">
+                                                        <a href="{{ $galleryMedia->getUrl() }}" target="_blank" title="{{ $galleryMedia->file_name }}">
+                                                            <img src="{{ $galleryMedia->getUrl() }}" alt="gallery" class="rounded" style="width: 100%; height: 65px; object-fit: cover;"/>
+                                                        </a>
+                                                        <button type="button" 
+                                                                class="btn btn-icon btn-danger btn-circle btn-sm position-absolute top-0 end-0 translate-middle delete-gallery-btn" 
+                                                                data-url="{{ route('admin.project.media.destroy', ['project' => $project->id, 'media' => $galleryMedia->id]) }}"
+                                                                data-target=".gallery-item-{{ $galleryMedia->id }}"
+                                                                style="width: 22px; height: 22px; font-size: 10px;"
+                                                                title="{{ \App\Helpers\TranslationHelper::translate('Delete') }}">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="col-md-4 d-flex align-items-center mt-4">
@@ -249,4 +280,57 @@
         </div>
     </div>
 @endsection
+
+@push('admin_js')
+<script>
+    $(document).on('click', '.delete-gallery-btn', function (e) {
+        e.preventDefault();
+        const btn = $(this);
+        const url = btn.data('url');
+        const target = btn.data('target');
+
+        Swal.fire({
+            title: "{{ \App\Helpers\TranslationHelper::translate('Are you sure?') }}",
+            text: "{{ \App\Helpers\TranslationHelper::translate('This gallery image will be deleted.') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: "{{ \App\Helpers\TranslationHelper::translate('Yes, delete it!') }}",
+            cancelButtonText: "{{ \App\Helpers\TranslationHelper::translate('Cancel') }}",
+            customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-light'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        $(target).fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                        Swal.fire({
+                            title: "{{ \App\Helpers\TranslationHelper::translate('Deleted!') }}",
+                            text: response.message,
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "{{ \App\Helpers\TranslationHelper::translate('Error!') }}",
+                            text: "{{ \App\Helpers\TranslationHelper::translate('Failed to delete image.') }}",
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+@endpush
 

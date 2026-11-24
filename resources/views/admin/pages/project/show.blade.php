@@ -62,6 +62,32 @@
                                     @endforelse
                                 </div>
                             </div>
+
+                            <div class="col-md-12">
+                                <strong>{{ \App\Helpers\TranslationHelper::translate('Cover Image') }}:</strong>
+                                <div class="mt-2">
+                                    @if ($project->getFirstMediaUrl('projects'))
+                                        <a href="{{ $project->getFirstMediaUrl('projects') }}" target="_blank">
+                                            <img src="{{ $project->getFirstMediaUrl('projects') }}" alt="cover" class="rounded border shadow-sm" style="max-height: 180px; object-fit: cover;"/>
+                                        </a>
+                                    @else
+                                        <span>-</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <strong>{{ \App\Helpers\TranslationHelper::translate('Gallery Screenshots') }}:</strong>
+                                <div class="d-flex flex-wrap gap-3 mt-2">
+                                    @forelse ($project->getMedia('projects_gallery') as $galleryMedia)
+                                        <a href="{{ $galleryMedia->getUrl() }}" target="_blank">
+                                            <img src="{{ $galleryMedia->getUrl() }}" alt="gallery" class="rounded border shadow-sm" style="width: 140px; height: 90px; object-fit: cover;"/>
+                                        </a>
+                                    @empty
+                                        <span>-</span>
+                                    @endforelse
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

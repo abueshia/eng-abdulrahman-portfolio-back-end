@@ -34,7 +34,7 @@ class ProjectController extends Controller
         $this->middleware(['auth:admin', 'permission:projects.view_all'], ['only' => ['index', 'table']]);
         $this->middleware(['auth:admin', 'permission:projects.view_details'], ['only' => ['show']]);
         $this->middleware(['auth:admin', 'permission:projects.create'], ['only' => ['create', 'store']]);
-        $this->middleware(['auth:admin', 'permission:projects.edit'], ['only' => ['edit', 'update']]);
+        $this->middleware(['auth:admin', 'permission:projects.edit'], ['only' => ['edit', 'update', 'deleteMedia']]);
         $this->middleware(['auth:admin', 'permission:projects.delete'], ['only' => ['destroy']]);
         $this->middleware(['auth:admin', 'permission:projects.sort'], ['only' => ['reorder', 'saveReorder']]);
     }
@@ -208,5 +208,33 @@ class ProjectController extends Controller
             'status' => 'success',
             'message' => TranslationHelper::translate('Done, Sorting Has Been Saved'),
         ]);
+    }
+
+    /**
+     * Delete a specific gallery screenshot media item from the project.
+     */
+    public function deleteMedia(Project $project, int $media): JsonResponse
+    {
+        $this->authorize('update', $project);
+
+        $mediaItem = $project->media()
+            ->where('id', $media)
+            ->where('collection_name', 'projects_gallery')
+            ->first();
+
+        if ($mediaItem !== null) {
+            $mediaItem->delete();
+            $this->projectService->flushCache();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => TranslationHelper::translate('Image Deleted Successfully'),
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => TranslationHelper::translate('Image not found'),
+        ], 404);
     }
 }
