@@ -39,7 +39,6 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>{{ \App\Helpers\TranslationHelper::translate('Icon') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Label') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Value') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Active') }}</th>
@@ -83,7 +82,6 @@
             },
             columns: [
                 {data: 'id', name: 'id', defaultContent: '-'},
-                {data: 'icon', name: 'icon', defaultContent: '-', orderable: false, searchable: false},
                 {data: 'label', name: 'label', defaultContent: '-'},
                 {data: 'display_value', name: 'value', defaultContent: '-'},
                 {data: 'is_active', name: 'is_active', defaultContent: '-'},

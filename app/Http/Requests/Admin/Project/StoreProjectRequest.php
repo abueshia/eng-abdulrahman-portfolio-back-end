@@ -26,6 +26,52 @@ class StoreProjectRequest extends BasePortfolioFormRequest
     }
 
     /**
+     * Prepare the data for validation, sanitizing and filtering empty challenges.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('challenge') && is_array($this->input('challenge'))) {
+            $challenges = $this->input('challenge');
+            $normalized = [];
+
+            foreach ($challenges as $lang => $items) {
+                if (is_array($items)) {
+                    $filtered = [];
+                    foreach ($items as $item) {
+                        if (is_array($item)) {
+                            $title = isset($item['title']) ? trim((string) $item['title']) : '';
+                            $description = isset($item['description']) ? trim((string) $item['description']) : '';
+                            if ($title !== '' || $description !== '') {
+                                $filtered[] = [
+                                    'title' => $title,
+                                    'description' => $description,
+                                ];
+                            }
+                        } elseif (is_string($item) && trim($item) !== '') {
+                            $filtered[] = [
+                                'title' => '',
+                                'description' => trim($item),
+                            ];
+                        }
+                    }
+                    $normalized[$lang] = $filtered;
+                } elseif (is_string($items) && trim($items) !== '') {
+                    $normalized[$lang] = [
+                        [
+                            'title' => '',
+                            'description' => trim($items),
+                        ],
+                    ];
+                } else {
+                    $normalized[$lang] = [];
+                }
+            }
+
+            $this->merge(['challenge' => $normalized]);
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -46,8 +92,9 @@ class StoreProjectRequest extends BasePortfolioFormRequest
             'description.ar' => ['required', 'string'],
             'description.en' => ['required', 'string'],
             'challenge' => ['nullable', 'array'],
-            'challenge.ar' => ['nullable', 'string'],
-            'challenge.en' => ['nullable', 'string'],
+            'challenge.*' => ['nullable', 'array'],
+            'challenge.*.*.title' => ['nullable', 'string', 'max:255'],
+            'challenge.*.*.description' => ['nullable', 'string', 'max:5000'],
             'solution' => ['nullable', 'array'],
             'solution.ar' => ['nullable', 'string'],
             'solution.en' => ['nullable', 'string'],

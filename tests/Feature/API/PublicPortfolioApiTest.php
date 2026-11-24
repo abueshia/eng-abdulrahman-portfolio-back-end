@@ -234,6 +234,51 @@ class PublicPortfolioApiTest extends TestCase
     }
 
     /**
+     * Verify that project challenge items return as structured JSON array of objects with title and description.
+     */
+    public function test_project_challenge_returns_structured_json_array_of_objects(): void
+    {
+        ['category' => $category, 'tech' => $tech] = $this->seedSamplePortfolioContent();
+
+        $project = Project::query()->create([
+            'category_id' => $category->id,
+            'title' => ['ar' => 'مشروع التحديات الهندسية', 'en' => 'Engineering Challenges Project'],
+            'slug' => 'engineering-challenges-project',
+            'short_description' => ['ar' => 'وصف مختصر', 'en' => 'Short summary'],
+            'description' => ['ar' => 'وصف تفصيلي', 'en' => 'Detailed description'],
+            'challenge' => [
+                'ar' => [
+                    ['title' => 'عزل البيانات بدون تكرار الكود', 'description' => 'منع تسرب البيانات بين المستأجرين'],
+                    ['title' => 'webhooks تصل مكررة', 'description' => 'التحقق من التوقيع ومفتاح idempotency'],
+                ],
+                'en' => [
+                    ['title' => 'Data Isolation Without Code Duplication', 'description' => 'Preventing tenant data leaks'],
+                    ['title' => 'Duplicate Webhooks', 'description' => 'Signature verification and idempotency keys'],
+                ],
+            ],
+            'project_type' => ProjectTypeEnum::Saas,
+            'status' => ProjectStatusEnum::Published,
+            'is_featured' => true,
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+        $project->technologies()->sync([$tech->id]);
+
+        $arResponse = $this->getJson("/api/v1/projects/{$project->slug}?lang=ar");
+        $arResponse->assertOk()
+            ->assertJsonPath('data.challenge.0.title', 'عزل البيانات بدون تكرار الكود')
+            ->assertJsonPath('data.challenge.0.description', 'منع تسرب البيانات بين المستأجرين')
+            ->assertJsonPath('data.challenges.1.title', 'webhooks تصل مكررة')
+            ->assertJsonPath('data.challenges.1.description', 'التحقق من التوقيع ومفتاح idempotency');
+
+        $enResponse = $this->getJson("/api/v1/projects/{$project->slug}?lang=en");
+        $enResponse->assertOk()
+            ->assertJsonPath('data.challenge.0.title', 'Data Isolation Without Code Duplication')
+            ->assertJsonPath('data.challenges.0.description', 'Preventing tenant data leaks')
+            ->assertJsonPath('data.challenges.1.title', 'Duplicate Webhooks');
+    }
+
+    /**
      * Verify technologies, experiences, credentials, services, testimonials, faqs, and stats endpoints.
      */
     public function test_technologies_experiences_credentials_services_testimonials_faqs_and_stats_endpoints(): void

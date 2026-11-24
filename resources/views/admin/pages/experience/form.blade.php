@@ -150,6 +150,7 @@
 
                                 @foreach (Config('language') as $key => $lang)
                                     <div class="col-md-6 mb-6">
+                                        
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <label class="fs-6 fw-bold form-label mb-0">
                                                 {{ \App\Helpers\TranslationHelper::translate('Achievements in') }} {{ __('methods.' . $lang) }}
@@ -190,9 +191,11 @@
                                                 </div>
                                             @endforeach
                                         </div>
+
                                         <div class="form-text text-muted mt-2">
                                             {{ \App\Helpers\TranslationHelper::translate('Add key achievements for this role. Each item will be displayed with a bullet.') }}
                                         </div>
+                                        
                                     </div>
                                 @endforeach
 

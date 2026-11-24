@@ -55,6 +55,8 @@ class ProjectResource extends JsonResource
             ->values()
             ->all();
 
+        $challenges = $this->getFormattedChallenges($locale);
+
         return [
             'id' => $this->id,
             'title' => (string) $this->getTranslation('title', $locale),
@@ -62,7 +64,8 @@ class ProjectResource extends JsonResource
             'slug' => $this->slug,
             'short_description' => $this->getTranslation('short_description', $locale),
             'description' => $this->getTranslation('description', $locale),
-            'challenge' => $this->getTranslation('challenge', $locale),
+            'challenge' => $challenges,
+            'challenges' => $challenges,
             'solution' => $this->getTranslation('solution', $locale),
             'results' => $this->getTranslation('results', $locale),
             'metrics' => $this->metrics,

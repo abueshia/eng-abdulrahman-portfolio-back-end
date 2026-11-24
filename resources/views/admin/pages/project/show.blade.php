@@ -52,6 +52,43 @@
                                 </div>
                             @endforeach
 
+                            @foreach (Config('language') as $key => $lang)
+                                <div class="col-md-6">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Challenges in') }} {{ __('methods.' . $lang) }}:</strong>
+                                    @php($challenges = $project->getFormattedChallenges($key))
+                                    @if (!empty($challenges))
+                                        <div class="mt-2 d-flex flex-column gap-2">
+                                            @foreach ($challenges as $ch)
+                                                <div class="border rounded p-3 bg-light">
+                                                    @if (!empty($ch['title']))
+                                                        <div class="fw-bold text-dark mb-1">{{ $ch['title'] }}</div>
+                                                    @endif
+                                                    @if (!empty($ch['description']))
+                                                        <div class="text-muted fs-7">{{ $ch['description'] }}</div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="mt-1 text-muted">-</p>
+                                    @endif
+                                </div>
+                            @endforeach
+
+                            @foreach (Config('language') as $key => $lang)
+                                <div class="col-md-6">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Solution in') }} {{ __('methods.' . $lang) }}:</strong>
+                                    <p class="mt-1">{{ $project->getTranslation('solution', $key, false) ?: '-' }}</p>
+                                </div>
+                            @endforeach
+
+                            @foreach (Config('language') as $key => $lang)
+                                <div class="col-md-6">
+                                    <strong>{{ \App\Helpers\TranslationHelper::translate('Results in') }} {{ __('methods.' . $lang) }}:</strong>
+                                    <p class="mt-1">{{ $project->getTranslation('results', $key, false) ?: '-' }}</p>
+                                </div>
+                            @endforeach
+
                             <div class="col-md-12">
                                 <strong>{{ \App\Helpers\TranslationHelper::translate('Technologies') }}:</strong>
                                 <div class="d-flex flex-wrap gap-2 mt-2">

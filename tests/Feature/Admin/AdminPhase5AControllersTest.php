@@ -90,6 +90,15 @@ class AdminPhase5AControllersTest extends TestCase
                     'ar' => 'وصف تفصيلي للمشروع ودراسة الحالة',
                     'en' => 'Detailed case study description',
                 ],
+                'challenge' => [
+                    'ar' => [
+                        ['title' => 'عزل البيانات بدون تكرار الكود', 'description' => 'منع تسرب البيانات بين المستأجرين'],
+                        ['title' => '', 'description' => ''],
+                    ],
+                    'en' => [
+                        ['title' => 'Data Isolation Without Duplication', 'description' => 'Preventing data leak across tenants'],
+                    ],
+                ],
                 'project_type' => ProjectTypeEnum::Ecommerce->value,
                 'status' => ProjectStatusEnum::Published->value,
                 'live_url' => 'https://shop.example.com',
@@ -104,6 +113,11 @@ class AdminPhase5AControllersTest extends TestCase
         $project = Project::query()->firstOrFail();
         $this->assertSame('enterprise-e-commerce-platform', $project->slug);
         $this->assertCount(1, $project->technologies);
+
+        $challengesAr = $project->getFormattedChallenges('ar');
+        $this->assertCount(1, $challengesAr);
+        $this->assertSame('عزل البيانات بدون تكرار الكود', $challengesAr[0]['title']);
+        $this->assertSame('منع تسرب البيانات بين المستأجرين', $challengesAr[0]['description']);
 
         // DataTables AJAX JSON
         $this->actingAs($this->superAdmin, 'admin')

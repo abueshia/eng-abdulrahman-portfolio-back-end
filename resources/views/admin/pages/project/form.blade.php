@@ -130,13 +130,71 @@
                                 @endforeach
 
                                 @foreach (Config('language') as $key => $lang)
-                                    <div class="col-md-6">
-                                        <label class="fs-6 fw-bold form-label mb-2">
-                                            {{ \App\Helpers\TranslationHelper::translate('Challenge in') }} {{ __('methods.' . $lang) }}
-                                        </label>
-                                        <textarea class="form-control form-control-solid"
-                                                  name="challenge[{{ $key }}]"
-                                                  rows="3">{{ old('challenge.' . $key, $project->getTranslation('challenge', $key, false)) }}</textarea>
+                                    <div class="col-md-6 mb-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <label class="fs-6 fw-bold form-label mb-0">
+                                                {{ \App\Helpers\TranslationHelper::translate('Challenges in') }} {{ __('methods.' . $lang) }}
+                                            </label>
+                                            <button type="button" class="btn btn-sm btn-light-primary add-challenge-btn" data-lang="{{ $key }}">
+                                                <i class="ki-duotone ki-plus fs-3"></i>
+                                                {{ \App\Helpers\TranslationHelper::translate('Add Challenge') }}
+                                            </button>
+                                        </div>
+
+                                        <?php
+                                            $oldChallenges = old('challenge.' . $key);
+                                            if (is_array($oldChallenges)) {
+                                                $challengeItems = [];
+                                                foreach ($oldChallenges as $item) {
+                                                    if (is_array($item)) {
+                                                        $t = (string) ($item['title'] ?? '');
+                                                        $d = (string) ($item['description'] ?? '');
+                                                        if (trim($t) !== '' || trim($d) !== '') {
+                                                            $challengeItems[] = ['title' => $t, 'description' => $d];
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                $challengeItems = $project->exists ? $project->getFormattedChallenges($key) : [];
+                                            }
+                                            if (empty($challengeItems)) {
+                                                $challengeItems = [['title' => '', 'description' => '']];
+                                            }
+                                        ?>
+
+                                        <div class="challenges-container" id="challenges_container_{{ $key }}">
+                                            @foreach ($challengeItems as $index => $item)
+                                                <div class="challenge-card card card-bordered border-dashed p-4 mb-3 bg-light-subtle">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="badge badge-light-primary fw-bold">
+                                                            {{ \App\Helpers\TranslationHelper::translate('Challenge') }} #<span class="challenge-index">{{ $index + 1 }}</span>
+                                                        </span>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-challenge-btn" title="{{ \App\Helpers\TranslationHelper::translate('Delete') }}">
+                                                            <i class="fas fa-trash-alt fs-6"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label fs-7 fw-bold mb-1">{{ \App\Helpers\TranslationHelper::translate('Challenge Title') }}</label>
+                                                        <input type="text"
+                                                               name="challenge[{{ $key }}][{{ $index }}][title]"
+                                                               class="form-control form-control-solid"
+                                                               placeholder="{{ $key === 'ar' ? 'عنوان التحدي (مثال: عزل البيانات بدون تكرار الكود)...' : 'Challenge title (e.g. Data isolation without code duplication)...' }}"
+                                                               value="{{ $item['title'] ?? '' }}"/>
+                                                    </div>
+                                                    <div>
+                                                        <label class="form-label fs-7 fw-bold mb-1">{{ \App\Helpers\TranslationHelper::translate('Challenge Description') }}</label>
+                                                        <textarea name="challenge[{{ $key }}][{{ $index }}][description]"
+                                                                  class="form-control form-control-solid"
+                                                                  rows="2"
+                                                                  placeholder="{{ $key === 'ar' ? 'تفاصيل التحدي والمشكلة الهندسية...' : 'Challenge description and technical problem...' }}">{{ $item['description'] ?? '' }}</textarea>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="form-text text-muted mt-2">
+                                            {{ \App\Helpers\TranslationHelper::translate('Add key technical challenges and architectural problems faced in this project.') }}
+                                        </div>
                                     </div>
                                 @endforeach
 
@@ -283,6 +341,62 @@
 
 @push('admin_js')
 <script>
+    $(document).on('click', '.add-challenge-btn', function () {
+        const lang = $(this).data('lang');
+        const container = $('#challenges_container_' + lang);
+        const nextIndex = container.find('.challenge-card').length;
+        const placeholderTitle = lang === 'ar' ? 'عنوان التحدي (مثال: عزل البيانات بدون تكرار الكود)...' : 'Challenge title (e.g. Data isolation without code duplication)...';
+        const placeholderDesc = lang === 'ar' ? 'تفاصيل التحدي والمشكلة الهندسية...' : 'Challenge description and technical problem...';
+        const deleteTitle = "{{ \App\Helpers\TranslationHelper::translate('Delete') }}";
+        const challengeBadge = "{{ \App\Helpers\TranslationHelper::translate('Challenge') }}";
+        const titleLabel = "{{ \App\Helpers\TranslationHelper::translate('Challenge Title') }}";
+        const descLabel = "{{ \App\Helpers\TranslationHelper::translate('Challenge Description') }}";
+
+        const newCard = $(`
+            <div class="challenge-card card card-bordered border-dashed p-4 mb-3 bg-light-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge badge-light-primary fw-bold">
+                        ${challengeBadge} #<span class="challenge-index">${nextIndex + 1}</span>
+                    </span>
+                    <button type="button" class="btn btn-icon btn-sm btn-light-danger remove-challenge-btn" title="${deleteTitle}">
+                        <i class="fas fa-trash-alt fs-6"></i>
+                    </button>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fs-7 fw-bold mb-1">${titleLabel}</label>
+                    <input type="text"
+                           name="challenge[${lang}][${nextIndex}][title]"
+                           class="form-control form-control-solid"
+                           placeholder="${placeholderTitle}"
+                           value=""/>
+                </div>
+                <div>
+                    <label class="form-label fs-7 fw-bold mb-1">${descLabel}</label>
+                    <textarea name="challenge[${lang}][${nextIndex}][description]"
+                              class="form-control form-control-solid"
+                              rows="2"
+                              placeholder="${placeholderDesc}"></textarea>
+                </div>
+            </div>
+        `);
+        container.append(newCard);
+        newCard.find('input').focus();
+    });
+
+    $(document).on('click', '.remove-challenge-btn', function () {
+        const container = $(this).closest('.challenges-container');
+        const cards = container.find('.challenge-card');
+        if (cards.length > 1) {
+            $(this).closest('.challenge-card').remove();
+            container.find('.challenge-card').each(function (idx) {
+                $(this).find('.challenge-index').text(idx + 1);
+            });
+        } else {
+            $(this).closest('.challenge-card').find('input').val('');
+            $(this).closest('.challenge-card').find('textarea').val('');
+        }
+    });
+
     $(document).on('click', '.delete-gallery-btn', function (e) {
         e.preventDefault();
         const btn = $(this);

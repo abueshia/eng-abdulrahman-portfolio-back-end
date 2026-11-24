@@ -146,6 +146,76 @@ class Project extends Model implements HasMedia
     }
 
     /**
+     * Get structured challenges list for the given locale.
+     * Parses stored JSON, array of objects, or legacy text into normalized items.
+     *
+     * @return array<int, array{title: string, description: string}>
+     */
+    public function getFormattedChallenges(?string $locale = null): array
+    {
+        $locale = $locale ?? app()->getLocale();
+        $raw = $this->getTranslation('challenge', $locale, false);
+
+        if (is_array($raw)) {
+            $items = [];
+            foreach ($raw as $item) {
+                if (is_array($item)) {
+                    $title = trim((string) ($item['title'] ?? ''));
+                    $desc = trim((string) ($item['description'] ?? ''));
+                    if ($title !== '' || $desc !== '') {
+                        $items[] = [
+                            'title' => $title,
+                            'description' => $desc,
+                        ];
+                    }
+                } elseif (is_string($item) && trim($item) !== '') {
+                    $items[] = [
+                        'title' => '',
+                        'description' => trim($item),
+                    ];
+                }
+            }
+
+            return $items;
+        }
+
+        if (is_string($raw) && trim($raw) !== '') {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                $items = [];
+                foreach ($decoded as $item) {
+                    if (is_array($item)) {
+                        $title = trim((string) ($item['title'] ?? ''));
+                        $desc = trim((string) ($item['description'] ?? ''));
+                        if ($title !== '' || $desc !== '') {
+                            $items[] = [
+                                'title' => $title,
+                                'description' => $desc,
+                            ];
+                        }
+                    } elseif (is_string($item) && trim($item) !== '') {
+                        $items[] = [
+                            'title' => '',
+                            'description' => trim($item),
+                        ];
+                    }
+                }
+
+                return $items;
+            }
+
+            return [
+                [
+                    'title' => '',
+                    'description' => trim($raw),
+                ],
+            ];
+        }
+
+        return [];
+    }
+
+    /**
      * Scope a query to only include active projects.
      *
      * @param  Builder<Project>  $query
