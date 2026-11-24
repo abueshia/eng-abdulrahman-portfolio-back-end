@@ -116,6 +116,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Contact Message Notification Recipient
+    |--------------------------------------------------------------------------
+    |
+    | The default destination email address for notifications whenever a new
+    | contact message or project inquiry is submitted through the portfolio.
+    |
+    */
+
+    'contact_notification_recipient' => env('CONTACT_NOTIFICATION_EMAIL', 'rm01062293490@gmail.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
     |

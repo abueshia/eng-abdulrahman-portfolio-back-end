@@ -27,6 +27,7 @@ use App\Enums\ProjectStatusEnum;
 use App\Enums\ProjectTypeEnum;
 use App\Enums\SettingKeyEnum;
 use App\Enums\TechnologyCategoryEnum;
+use App\Mail\NewContactMessageMail;
 use App\Models\Blog;
 use App\Models\Category;
 use App\Models\Credential;
@@ -42,6 +43,7 @@ use App\Services\TestimonialService;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -345,7 +347,9 @@ class PublicPortfolioApiTest extends TestCase
         $honeypotResponse->assertStatus(422)
             ->assertJsonPath('success', false);
 
-        // 3. Valid contact submission -> 201 Created, sensitive fields excluded from response
+        // 3. Valid contact submission -> 201 Created, email notification sent, sensitive fields excluded from response
+        Mail::fake();
+
         $validResponse = $this->postJson('/api/v1/contact?lang=en', [
             'name' => 'Tech Founder',
             'email' => 'founder@startup.io',
@@ -371,6 +375,12 @@ class PublicPortfolioApiTest extends TestCase
             'email' => 'founder@startup.io',
             'type' => 'project_inquiry',
         ]);
+
+        Mail::assertSent(NewContactMessageMail::class, static function (NewContactMessageMail $mail): bool {
+            return $mail->hasTo('rm01062293490@gmail.com')
+                && $mail->contactMessage->email === 'founder@startup.io'
+                && $mail->contactMessage->name === 'Tech Founder';
+        });
 
         // 4. Rate Limiting (throttle:5,1 allows 5 requests per minute; the 6th must return 429)
         for ($i = 0; $i < 3; $i++) {

@@ -81,6 +81,28 @@ class ProjectViewModel extends ViewModel
     }
 
     /**
+     * Resolve the structured challenge items for each locale, preferring old input.
+     *
+     * Each locale stores a list of `{title, description}` items. Legacy plain-text
+     * values are wrapped into a single item so they remain editable.
+     *
+     * @return array<string, array<int, array{title: string, description: string}>>
+     */
+    public function challengeItems(): array
+    {
+        $items = [];
+
+        foreach (array_keys((array) config('language')) as $locale) {
+            $locale = (string) $locale;
+            $raw = old('challenge.'.$locale, $this->project->getTranslation('challenge', $locale, false));
+
+            $items[$locale] = $this->normalizeChallengeItems($raw);
+        }
+
+        return $items;
+    }
+
+    /**
      * @return array<int, int>
      */
     public function selectedTechnologyIds(): array
@@ -93,5 +115,38 @@ class ProjectViewModel extends ViewModel
             ->pluck('id')
             ->map(static fn (mixed $id): int => (int) $id)
             ->all();
+    }
+
+    /**
+     * @return array<int, array{title: string, description: string}>
+     */
+    private function normalizeChallengeItems(mixed $raw): array
+    {
+        if (is_string($raw)) {
+            return trim($raw) === '' ? [] : [['title' => '', 'description' => $raw]];
+        }
+
+        if (! is_array($raw)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($raw as $item) {
+            if (is_string($item)) {
+                $items[] = ['title' => '', 'description' => $item];
+
+                continue;
+            }
+
+            if (is_array($item)) {
+                $items[] = [
+                    'title' => is_scalar($item['title'] ?? null) ? (string) $item['title'] : '',
+                    'description' => is_scalar($item['description'] ?? null) ? (string) $item['description'] : '',
+                ];
+            }
+        }
+
+        return $items;
     }
 }

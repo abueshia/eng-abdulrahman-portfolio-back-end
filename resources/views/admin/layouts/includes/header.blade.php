@@ -38,7 +38,8 @@
             <div class="app-navbar flex-shrink-0 d-flex align-items-center gap-2">
                 <!--begin::View Portfolio Website-->
                 <div class="app-navbar-item">
-                    <a href="{{ url('/') }}" target="_blank" rel="noopener"
+                    <a href="https://eng-abdulrahman-abu-eisha.vercel.app" target="_blank" rel="noopener"
+                    {{-- {{ url('/') }} --}}
                        class="btn btn-sm btn-light-primary fw-semibold d-flex align-items-center gap-1">
                         <i class="fas fa-external-link-alt fs-7"></i>
                         <span class="d-none d-sm-inline">{{ \App\Helpers\TranslationHelper::translate('View Website') }}</span>

@@ -14,12 +14,15 @@ namespace App\Services;
 use App\DTOs\ContactMessageData;
 use App\Enums\ContactMessageStatusEnum;
 use App\Enums\ContactMessageTypeEnum;
+use App\Mail\NewContactMessageMail;
 use App\Models\ContactMessage;
 use App\Repositories\Contracts\ContactMessageRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ContactMessageService
 {
@@ -108,7 +111,7 @@ class ContactMessageService
      */
     public function submit(ContactMessageData $dto): ContactMessage
     {
-        return DB::transaction(function () use ($dto): ContactMessage {
+        $message = DB::transaction(function () use ($dto): ContactMessage {
             $sortOrder = $this->contactMessageRepository->nextSortOrder();
 
             /** @var ContactMessage $message */
@@ -116,6 +119,32 @@ class ContactMessageService
 
             return $message;
         });
+
+        $this->sendNotificationEmail($message);
+
+        return $message;
+    }
+
+    /**
+     * Send an email notification to the portfolio owner when a new message is received.
+     */
+    public function sendNotificationEmail(ContactMessage $message): void
+    {
+        $recipient = (string) config('mail.contact_notification_recipient', 'rm01062293490@gmail.com');
+
+        if (trim($recipient) === '') {
+            return;
+        }
+
+        try {
+            Mail::to($recipient)->send(new NewContactMessageMail($message));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send contact message email notification: '.$e->getMessage(), [
+                'message_id' => $message->id,
+                'recipient' => $recipient,
+                'exception' => $e,
+            ]);
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ readonly class ProjectData
      * @param  array<string, string|null>  $subtitle
      * @param  array<string, string|null>  $shortDescription
      * @param  array<string, string|null>  $description
-     * @param  array<string, string|null>  $challenge
+     * @param  array<string, string|array<int, array{title: string|null, description: string|null}>|null>  $challenge
      * @param  array<string, string|null>  $solution
      * @param  array<string, string|null>  $results
      * @param  array<string, string|null>  $clientName
@@ -100,7 +100,7 @@ readonly class ProjectData
             subtitle: is_array($validated['subtitle'] ?? null) ? $validated['subtitle'] : [],
             shortDescription: is_array($validated['short_description'] ?? null) ? $validated['short_description'] : [],
             description: is_array($validated['description'] ?? null) ? $validated['description'] : [],
-            challenge: is_array($validated['challenge'] ?? null) ? $validated['challenge'] : [],
+            challenge: is_array($validated['challenge'] ?? null) ? self::normalizeChallenge($validated['challenge']) : [],
             solution: is_array($validated['solution'] ?? null) ? $validated['solution'] : [],
             results: is_array($validated['results'] ?? null) ? $validated['results'] : [],
             clientName: is_array($validated['client_name'] ?? null) ? $validated['client_name'] : [],
@@ -123,6 +123,35 @@ readonly class ProjectData
             galleryImages: $gallery,
             replaceGallery: (bool) ($validated['replace_gallery'] ?? false),
         );
+    }
+
+    /**
+     * Drop empty challenge rows and reindex each locale's list of `{title, description}` items.
+     *
+     * @param  array<string, mixed>  $challenge
+     * @return array<string, mixed>
+     */
+    private static function normalizeChallenge(array $challenge): array
+    {
+        $normalized = [];
+
+        foreach ($challenge as $locale => $items) {
+            if (! is_array($items)) {
+                $normalized[$locale] = $items;
+
+                continue;
+            }
+
+            $normalized[$locale] = array_values(array_filter(
+                array_map(static fn (mixed $item): array => [
+                    'title' => is_array($item) && is_scalar($item['title'] ?? null) ? trim((string) $item['title']) : '',
+                    'description' => is_array($item) && is_scalar($item['description'] ?? null) ? trim((string) $item['description']) : '',
+                ], $items),
+                static fn (array $item): bool => $item['title'] !== '' || $item['description'] !== '',
+            ));
+        }
+
+        return $normalized;
     }
 
     /**

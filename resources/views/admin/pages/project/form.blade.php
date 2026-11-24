@@ -131,12 +131,35 @@
 
                                 @foreach (Config('language') as $key => $lang)
                                     <div class="col-md-6">
-                                        <label class="fs-6 fw-bold form-label mb-2">
-                                            {{ \App\Helpers\TranslationHelper::translate('Challenge in') }} {{ __('methods.' . $lang) }}
-                                        </label>
-                                        <textarea class="form-control form-control-solid"
-                                                  name="challenge[{{ $key }}]"
-                                                  rows="3">{{ old('challenge.' . $key, $project->getTranslation('challenge', $key, false)) }}</textarea>
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <label class="fs-6 fw-bold form-label mb-0">
+                                                {{ \App\Helpers\TranslationHelper::translate('Challenge in') }} {{ __('methods.' . $lang) }}
+                                            </label>
+                                            <button type="button" class="btn btn-sm btn-light-primary js-challenge-add" data-locale="{{ $key }}">
+                                                + {{ \App\Helpers\TranslationHelper::translate('Add') }}
+                                            </button>
+                                        </div>
+                                        <div class="js-challenge-list" data-locale="{{ $key }}">
+                                            @foreach ($challengeItems[$key] ?? [] as $index => $item)
+                                                <div class="border border-dashed rounded p-3 mb-3 js-challenge-item">
+                                                    <input type="text"
+                                                           class="form-control form-control-solid mb-2"
+                                                           name="challenge[{{ $key }}][{{ $index }}][title]"
+                                                           value="{{ $item['title'] }}"
+                                                           placeholder="{{ \App\Helpers\TranslationHelper::translate('Title') }}"/>
+                                                    <textarea class="form-control form-control-solid mb-2"
+                                                              name="challenge[{{ $key }}][{{ $index }}][description]"
+                                                              rows="2"
+                                                              placeholder="{{ \App\Helpers\TranslationHelper::translate('Description') }}">{{ $item['description'] }}</textarea>
+                                                    <button type="button" class="btn btn-sm btn-light-danger js-challenge-remove">
+                                                        {{ \App\Helpers\TranslationHelper::translate('Delete') }}
+                                                    </button>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        @error('challenge.' . $key . '*')
+                                            <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
+                                        @enderror
                                     </div>
                                 @endforeach
 
@@ -212,6 +235,23 @@
                                     @error('gallery.*')
                                         <span class="text-danger d-block mt-1"><strong>{{ $message }}</strong></span>
                                     @enderror
+                                    @if ($project->exists && $project->getMedia('projects_gallery')->isNotEmpty())
+                                        <div class="d-flex flex-wrap gap-3 mt-3">
+                                            @foreach ($project->getMedia('projects_gallery') as $galleryMedia)
+                                                <a href="{{ $galleryMedia->getUrl() }}" target="_blank" rel="noopener">
+                                                    <img src="{{ $galleryMedia->getUrl() }}" alt="gallery" class="rounded border object-fit-cover" width="120" height="80"/>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                        <div class="form-check form-check-custom form-check-solid mt-3">
+                                            <input type="hidden" name="replace_gallery" value="0"/>
+                                            <input class="form-check-input" type="checkbox" name="replace_gallery" value="1" id="replace_gallery"
+                                                   @checked((bool) old('replace_gallery'))/>
+                                            <label class="form-check-label ms-2" for="replace_gallery">
+                                                {{ \App\Helpers\TranslationHelper::translate('Replace existing gallery with new uploads') }}
+                                            </label>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="col-md-4 d-flex align-items-center mt-4">
@@ -248,5 +288,48 @@
             </div>
         </div>
     </div>
+
+    <template id="challenge-item-template">
+        <div class="border border-dashed rounded p-3 mb-3 js-challenge-item">
+            <input type="text" class="form-control form-control-solid mb-2" data-field="title"
+                   placeholder="{{ \App\Helpers\TranslationHelper::translate('Title') }}"/>
+            <textarea class="form-control form-control-solid mb-2" rows="2" data-field="description"
+                      placeholder="{{ \App\Helpers\TranslationHelper::translate('Description') }}"></textarea>
+            <button type="button" class="btn btn-sm btn-light-danger js-challenge-remove">
+                {{ \App\Helpers\TranslationHelper::translate('Delete') }}
+            </button>
+        </div>
+    </template>
 @endsection
+
+@push('admin_js')
+    <script>
+        (function () {
+            const template = document.getElementById('challenge-item-template');
+
+            document.querySelectorAll('.js-challenge-add').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const locale = button.dataset.locale;
+                    const list = document.querySelector('.js-challenge-list[data-locale="' + locale + '"]');
+                    const index = Date.now();
+                    const item = template.content.firstElementChild.cloneNode(true);
+
+                    item.querySelectorAll('[data-field]').forEach(function (field) {
+                        field.name = 'challenge[' + locale + '][' + index + '][' + field.dataset.field + ']';
+                    });
+
+                    list.appendChild(item);
+                });
+            });
+
+            document.addEventListener('click', function (event) {
+                const removeButton = event.target.closest('.js-challenge-remove');
+
+                if (removeButton) {
+                    removeButton.closest('.js-challenge-item').remove();
+                }
+            });
+        })();
+    </script>
+@endpush
 
