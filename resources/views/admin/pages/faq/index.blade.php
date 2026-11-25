@@ -40,7 +40,6 @@
                         <tr>
                             <th>#</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Question') }}</th>
-                            <th>{{ \App\Helpers\TranslationHelper::translate('Answer') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Active') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Actions') }}</th>
                         </tr>
@@ -83,7 +82,6 @@
             columns: [
                 {data: 'id', name: 'id', defaultContent: '-'},
                 {data: 'question', name: 'question', defaultContent: '-'},
-                {data: 'answer', name: 'answer', defaultContent: '-'},
                 {data: 'is_active', name: 'is_active', defaultContent: '-'},
                 {data: 'action', orderable: false, searchable: false, className: 'text-center'}
             ],
