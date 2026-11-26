@@ -44,9 +44,10 @@
                             <th>{{ \App\Helpers\TranslationHelper::translate('Category') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Type') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Status') }}</th>
-                            <th>{{ \App\Helpers\TranslationHelper::translate('Featured') }}</th>
+                            <th class="text-center">{{ \App\Helpers\TranslationHelper::translate('Featured') }}</th>
+                            <th class="text-center">{{ \App\Helpers\TranslationHelper::translate('Active') }}</th>
                             <th>{{ \App\Helpers\TranslationHelper::translate('Date') }}</th>
-                            <th>{{ \App\Helpers\TranslationHelper::translate('Actions') }}</th>
+                            <th class="text-center">{{ \App\Helpers\TranslationHelper::translate('Actions') }}</th>
                         </tr>
                         </thead>
                     </table>
@@ -91,13 +92,84 @@
                 {data: 'category', name: 'category', defaultContent: '-', orderable: false},
                 {data: 'project_type', name: 'project_type', defaultContent: '-'},
                 {data: 'status', name: 'status', defaultContent: '-'},
-                {data: 'is_featured', name: 'is_featured', defaultContent: '-'},
+                {data: 'is_featured', name: 'is_featured', defaultContent: '-', className: 'text-center'},
+                {data: 'is_active', name: 'is_active', defaultContent: '-', className: 'text-center'},
                 {data: 'created_at', name: 'created_at', defaultContent: '-'},
                 {data: 'action', orderable: false, searchable: false, className: 'text-center'}
             ],
             createdRow: function (row, data) {
                 $(row).attr('id', 'row-' + data['id']);
             }
+        });
+
+        $(document).on('change', '.toggle-project-featured', function () {
+            const checkbox = $(this);
+            const url = checkbox.data('url');
+            const originalState = !checkbox.is(':checked');
+
+            checkbox.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    checkbox.prop('disabled', false);
+                    Swal.fire({
+                        title: "{{ \App\Helpers\TranslationHelper::translate('Success') }}",
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                },
+                error: function (xhr) {
+                    checkbox.prop('disabled', false);
+                    checkbox.prop('checked', originalState);
+                    Swal.fire({
+                        title: "{{ \App\Helpers\TranslationHelper::translate('Error!') }}",
+                        text: xhr.responseJSON?.message || "{{ \App\Helpers\TranslationHelper::translate('Failed to update status.') }}",
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $(document).on('change', '.toggle-project-active', function () {
+            const checkbox = $(this);
+            const url = checkbox.data('url');
+            const originalState = !checkbox.is(':checked');
+
+            checkbox.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    checkbox.prop('disabled', false);
+                    Swal.fire({
+                        title: "{{ \App\Helpers\TranslationHelper::translate('Success') }}",
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                },
+                error: function (xhr) {
+                    checkbox.prop('disabled', false);
+                    checkbox.prop('checked', originalState);
+                    Swal.fire({
+                        title: "{{ \App\Helpers\TranslationHelper::translate('Error!') }}",
+                        text: xhr.responseJSON?.message || "{{ \App\Helpers\TranslationHelper::translate('Failed to update status.') }}",
+                        icon: 'error'
+                    });
+                }
+            });
         });
     </script>
     <script src="{{ asset('dashboard/assets/js/delete-item.js') }}" type="text/javascript"></script>

@@ -76,6 +76,8 @@ Route::group(
                 Route::get('/reorder/project', [ProjectController::class, 'reorder'])->name('project.reorder');
                 Route::post('/reorder/save', [ProjectController::class, 'saveReorder'])->name('project.reorder.save');
                 Route::get('/table/show', [ProjectController::class, 'table'])->name('project.table');
+                Route::post('/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('project.toggleFeatured');
+                Route::post('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggleActive');
                 Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
                 Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
                 Route::put('/{project}', [ProjectController::class, 'update'])->name('project.update');

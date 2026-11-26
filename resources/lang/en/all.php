@@ -58,6 +58,13 @@ return [
     'Completed At' => 'Completed At',
     'Gallery Screenshots' => 'Gallery Screenshots',
     'Featured Project' => 'Featured Project',
+    'Project marked as featured successfully' => 'Project marked as featured successfully',
+    'Project removed from featured successfully' => 'Project removed from featured successfully',
+    'Project activated successfully' => 'Project activated successfully',
+    'Project deactivated successfully' => 'Project deactivated successfully',
+    'Failed to update status.' => 'Failed to update status.',
+    'Toggle Featured' => 'Toggle Featured',
+    'Toggle Active' => 'Toggle Active',
 
     // Technologies
     'Technologies' => 'Technologies',

@@ -58,6 +58,13 @@ return [
     'Completed At' => 'تاريخ الإنجاز',
     'Gallery Screenshots' => 'معرض شاشات المشروع',
     'Featured Project' => 'مشروع مميز',
+    'Project marked as featured successfully' => 'تم تعيين المشروع كمميز بنجاح',
+    'Project removed from featured successfully' => 'تم إلغاء تمييز المشروع بنجاح',
+    'Project activated successfully' => 'تم تفعيل المشروع بنجاح',
+    'Project deactivated successfully' => 'تم تعطيل المشروع بنجاح',
+    'Failed to update status.' => 'فشل تحديث الحالة.',
+    'Toggle Featured' => 'تحديد كمميز',
+    'Toggle Active' => 'تحديد كمفعل',
 
     // Technologies
     'Technologies' => 'التقنيات والمهارات',

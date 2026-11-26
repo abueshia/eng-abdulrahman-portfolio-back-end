@@ -256,6 +256,44 @@ class ProjectService
     }
 
     /**
+     * Toggle the featured status of a project and flush cache.
+     */
+    public function toggleFeatured(Project $project): Project
+    {
+        $updated = DB::transaction(function () use ($project): Project {
+            /** @var Project $saved */
+            $saved = $this->projectRepository->update($project, [
+                'is_featured' => ! $project->is_featured,
+            ]);
+
+            return $saved;
+        });
+
+        $this->flushCache();
+
+        return $updated;
+    }
+
+    /**
+     * Toggle the active status of a project and flush cache.
+     */
+    public function toggleActive(Project $project): Project
+    {
+        $updated = DB::transaction(function () use ($project): Project {
+            /** @var Project $saved */
+            $saved = $this->projectRepository->update($project, [
+                'is_active' => ! $project->is_active,
+            ]);
+
+            return $saved;
+        });
+
+        $this->flushCache();
+
+        return $updated;
+    }
+
+    /**
      * Reorder projects by an array of IDs or structured sort items.
      *
      * @param  array<int, int|array{id: int, sort_order?: int, lft?: int, rgt?: int, depth?: int, parent_id?: int|null}>  $items

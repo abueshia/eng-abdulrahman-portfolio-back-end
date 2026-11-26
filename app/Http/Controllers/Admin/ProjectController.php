@@ -34,7 +34,7 @@ class ProjectController extends Controller
         $this->middleware(['auth:admin', 'permission:projects.view_all'], ['only' => ['index', 'table']]);
         $this->middleware(['auth:admin', 'permission:projects.view_details'], ['only' => ['show']]);
         $this->middleware(['auth:admin', 'permission:projects.create'], ['only' => ['create', 'store']]);
-        $this->middleware(['auth:admin', 'permission:projects.edit'], ['only' => ['edit', 'update']]);
+        $this->middleware(['auth:admin', 'permission:projects.edit'], ['only' => ['edit', 'update', 'toggleFeatured', 'toggleActive']]);
         $this->middleware(['auth:admin', 'permission:projects.delete'], ['only' => ['destroy']]);
         $this->middleware(['auth:admin', 'permission:projects.sort'], ['only' => ['reorder', 'saveReorder']]);
     }
@@ -98,13 +98,82 @@ class ProjectController extends Controller
 
                 return '<span class="badge badge-light-'.$status->color().'">'.e($status->label()).'</span>';
             })
-            ->editColumn('is_featured', static fn (Project $project): string => $project->is_featured
-                ? '<span class="badge badge-light-warning">'.e(TranslationHelper::translate('Featured')).'</span>'
-                : '<span class="badge badge-light">'.e(TranslationHelper::translate('Standard')).'</span>')
+            ->editColumn('is_featured', static function (Project $project): string {
+                $checked = $project->is_featured ? 'checked' : '';
+                $disabled = auth()->guard('admin')->user()?->can('projects.edit', 'admin') ? '' : 'disabled';
+                $url = route('admin.project.toggleFeatured', $project->id);
+                $title = TranslationHelper::translate('Toggle Featured');
+
+                return '<div class="d-flex justify-content-center">
+                    <div class="form-check form-switch form-check-custom form-check-solid">
+                        <input class="form-check-input toggle-project-featured" 
+                               type="checkbox" 
+                               data-url="'.e($url).'" 
+                               '.$checked.' 
+                               '.$disabled.' 
+                               style="cursor:pointer;" 
+                               title="'.e($title).'" />
+                    </div>
+                </div>';
+            })
+            ->addColumn('is_active', static function (Project $project): string {
+                $checked = $project->is_active ? 'checked' : '';
+                $disabled = auth()->guard('admin')->user()?->can('projects.edit', 'admin') ? '' : 'disabled';
+                $url = route('admin.project.toggleActive', $project->id);
+                $title = TranslationHelper::translate('Toggle Active');
+
+                return '<div class="d-flex justify-content-center">
+                    <div class="form-check form-switch form-check-custom form-check-solid">
+                        <input class="form-check-input toggle-project-active" 
+                               type="checkbox" 
+                               data-url="'.e($url).'" 
+                               '.$checked.' 
+                               '.$disabled.' 
+                               style="cursor:pointer;" 
+                               title="'.e($title).'" />
+                    </div>
+                </div>';
+            })
             ->editColumn('created_at', static fn (Project $project): string => $project->created_at?->format('Y-m-d') ?? '-')
             ->addColumn('action', static fn (Project $project): string => view('admin.pages.project.buttons', compact('project'))->render())
-            ->rawColumns(['image', 'project_type', 'status', 'is_featured', 'action'])
+            ->rawColumns(['image', 'project_type', 'status', 'is_featured', 'is_active', 'action'])
             ->make(true);
+    }
+
+    /**
+     * Toggle the featured status of the specified project via AJAX.
+     */
+    public function toggleFeatured(Project $project): JsonResponse
+    {
+        $this->authorize('update', $project);
+
+        $updated = $this->projectService->toggleFeatured($project);
+
+        return response()->json([
+            'success' => true,
+            'is_featured' => $updated->is_featured,
+            'message' => $updated->is_featured
+                ? TranslationHelper::translate('Project marked as featured successfully')
+                : TranslationHelper::translate('Project removed from featured successfully'),
+        ]);
+    }
+
+    /**
+     * Toggle the active status of the specified project via AJAX.
+     */
+    public function toggleActive(Project $project): JsonResponse
+    {
+        $this->authorize('update', $project);
+
+        $updated = $this->projectService->toggleActive($project);
+
+        return response()->json([
+            'success' => true,
+            'is_active' => $updated->is_active,
+            'message' => $updated->is_active
+                ? TranslationHelper::translate('Project activated successfully')
+                : TranslationHelper::translate('Project deactivated successfully'),
+        ]);
     }
 
     /**

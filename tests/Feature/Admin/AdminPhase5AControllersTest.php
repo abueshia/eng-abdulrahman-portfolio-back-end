@@ -105,10 +105,44 @@ class AdminPhase5AControllersTest extends TestCase
         $this->assertCount(1, $project->technologies);
 
         // DataTables AJAX JSON
-        $this->actingAs($this->superAdmin, 'admin')
+        $tableResponse = $this->actingAs($this->superAdmin, 'admin')
             ->getJson('/en/admin/project/table/show')
             ->assertOk()
             ->assertJsonStructure(['data', 'recordsTotal', 'recordsFiltered']);
+
+        $tableData = $tableResponse->json('data.0');
+        $this->assertStringContainsString('toggle-project-featured', (string) $tableData['is_featured']);
+        $this->assertStringContainsString('toggle-project-active', (string) $tableData['is_active']);
+
+        // Toggle Featured via AJAX switch
+        $this->actingAs($this->superAdmin, 'admin')
+            ->postJson("/en/admin/project/{$project->id}/toggle-featured")
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('is_featured', false);
+        $this->assertFalse((bool) $project->fresh()->is_featured);
+
+        $this->actingAs($this->superAdmin, 'admin')
+            ->postJson("/en/admin/project/{$project->id}/toggle-featured")
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('is_featured', true);
+        $this->assertTrue((bool) $project->fresh()->is_featured);
+
+        // Toggle Active via AJAX switch
+        $this->actingAs($this->superAdmin, 'admin')
+            ->postJson("/en/admin/project/{$project->id}/toggle-active")
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('is_active', false);
+        $this->assertFalse((bool) $project->fresh()->is_active);
+
+        $this->actingAs($this->superAdmin, 'admin')
+            ->postJson("/en/admin/project/{$project->id}/toggle-active")
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('is_active', true);
+        $this->assertTrue((bool) $project->fresh()->is_active);
 
         // Show & Edit views
         $this->actingAs($this->superAdmin, 'admin')
